@@ -6,8 +6,77 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Lights Fragment"
-        android:textSize="30sp"
-        android:layout_centerInParent="true"/>
+        android:layout_centerInParent="false"
+        android:layout_margin="20sp"
+        android:text="Color Picker"
+        android:textStyle="bold"
+        android:textColor="@color/black"
+        android:textSize="20sp" />
+
+    <GridLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:columnCount="3"
+        android:paddingTop="50sp"
+        android:rowCount="3">
+
+        <Button
+            android:id="@+id/btn_red"
+            android:layout_margin="15sp"
+            android:backgroundTint="@color/red" />
+
+        <Button
+            android:id="@+id/btn_green"
+            android:layout_margin="15sp"
+            android:backgroundTint="@color/green" />
+
+        <Button
+            android:id="@+id/btn_blue"
+            android:layout_margin="15sp"
+            android:backgroundTint="@color/blue" />
+
+        <Button
+            android:id="@+id/btn_yellow"
+            android:layout_margin="15sp"
+            android:backgroundTint="@color/yellow" />
+
+        <Button
+            android:id="@+id/btn_magenta"
+            android:layout_margin="15sp"
+            android:backgroundTint="@color/magenta" />
+
+        <Button
+            android:id="@+id/btn_orange"
+            android:layout_margin="15sp"
+            android:backgroundTint="@color/orange" />
+
+        <Button
+            android:id="@+id/btn_cyan"
+            android:layout_margin="15sp"
+            android:backgroundTint="@color/cyan" />
+
+        <Button
+            android:id="@+id/btn_white"
+            android:layout_margin="15sp"
+            android:backgroundTint="@color/white" />
+
+        <Button
+            android:id="@+id/btn_off"
+            android:layout_margin="15sp"
+            android:backgroundTint="@color/off" />
+
+
+    </GridLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginHorizontal="30pt"
+        android:layout_marginBottom="100sp"
+        android:text="Tap on a button above to change and test the LED lights on the MiDEVICE"
+        android:textAlignment="center"
+        android:textColor="@color/black"
+        android:textSize="15sp" />
 
 </RelativeLayout>
