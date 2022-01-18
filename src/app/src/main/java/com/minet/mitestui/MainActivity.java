@@ -96,8 +96,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             externalFilter.addAction("BMP_INDEX");
 
             this.registerReceiver(externalReaderReceiver, externalFilter, null, null);
-            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, externalFragment).commit();
-            navigationView.setCheckedItem(R.id.nav_external);
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new PrinterFragment()).commit();
+            navigationView.setCheckedItem(R.id.nav_printer);
             setTitle("Home");
         }
 

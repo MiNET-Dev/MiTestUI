@@ -118,8 +118,7 @@ public class ExternalFragment extends Fragment {
                 btnUploadBackground.setText("DOWNLOADING");
                 btnUploadBackground.setEnabled(false);
                 backgroundFile.createNewFile();
-                // DOWNLOADING B.BMP ON STARTUP
-                downloadFile(_BACKGROUND_DOWNLOAD_URL, backgroundFile, btnUploadBackground, "UPLOAD BACKGROUND");
+                Utils.downloadFile(_BACKGROUND_DOWNLOAD_URL, backgroundFile, btnUploadBackground, "UPLOAD BACKGROUND");
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -132,8 +131,7 @@ public class ExternalFragment extends Fragment {
                 btnUploadOverlay.setText("DOWNLOADING");
                 btnUploadOverlay.setEnabled(false);
                 overlayFile.createNewFile();
-                // DOWNLOADING B.BMP ON STARTUP
-                downloadFile(_OVERLAY_DOWNLOAD_URL, overlayFile, btnUploadOverlay, "UPLOAD OVERLAY");
+                Utils.downloadFile(_OVERLAY_DOWNLOAD_URL, overlayFile, btnUploadOverlay, "UPLOAD OVERLAY");
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -146,8 +144,7 @@ public class ExternalFragment extends Fragment {
                 btnUploadSound.setText("DOWNLOADING");
                 btnUploadSound.setEnabled(false);
                 soundFile.createNewFile();
-                // DOWNLOADING B.BMP ON STARTUP
-                downloadFile(_SOUND_DOWNLOAD_URL, soundFile, btnUploadSound, "UPLOAD SOUND");
+                Utils.downloadFile(_SOUND_DOWNLOAD_URL, soundFile, btnUploadSound, "UPLOAD SOUND");
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -157,25 +154,32 @@ public class ExternalFragment extends Fragment {
     }
 
     View.OnClickListener getBMPIndexes = v -> {
-        ServiceHelper.getInstance().getBMPIndexes();
-        btnGetBMPIndexes.setEnabled(false);
-        btnGetWAVIndexes.setEnabled(false);
-        tblConfig.removeAllViews();
-//        populateConfigTable("{\"readers\":\"[{\\\"reader_index\\\":4,\\\"config\\\":\\\"[{\\\\\\\"Index\\\\\\\":0,\\\\\\\"Name\\\\\\\":\\\\\\\"background\\\\\\\"}, {\\\\\\\"Index\\\\\\\":1,\\\\\\\"Name\\\\\\\":\\\\\\\"������������\\\\\\\"}, {\\\\\\\"Index\\\\\\\":2,\\\\\\\"Name\\\\\\\":\\\\\\\"bgok.raw\\\\\\\"}, {\\\\\\\"Index\\\\\\\":3,\\\\\\\"Name\\\\\\\":\\\\\\\"bgno.raw\\\\\\\"}, {\\\\\\\"Index\\\\\\\":4,\\\\\\\"Name\\\\\\\":\\\\\\\"������������\\\\\\\"}, {\\\\\\\"Index\\\\\\\":5,\\\\\\\"Name\\\\\\\":\\\\\\\"������������\\\\\\\"}, {\\\\\\\"Index\\\\\\\":6,\\\\\\\"Name\\\\\\\":\\\\\\\"������������\\\\\\\"}, {\\\\\\\"Index\\\\\\\":7,\\\\\\\"Name\\\\\\\":\\\\\\\"������������\\\\\\\"}, {\\\\\\\"Index\\\\\\\":8,\\\\\\\"Name\\\\\\\":\\\\\\\"������������\\\\\\\"}, {\\\\\\\"Index\\\\\\\":9,\\\\\\\"Name\\\\\\\":\\\\\\\"������������\\\\\\\"}]\\\"}]\"}");
+        try {
+            ServiceHelper.getInstance().getBMPIndexes();
+            btnGetBMPIndexes.setEnabled(false);
+            btnGetWAVIndexes.setEnabled(false);
+            tblConfig.removeAllViews();
+        } catch (RemoteException exception){
+            Toast.makeText(getContext(), "Something went wrong", Toast.LENGTH_LONG).show();
+        }
     };
 
     View.OnClickListener getWAVIndexes = v -> {
-        ServiceHelper.getInstance().getWAVIndexes();
-        btnGetBMPIndexes.setEnabled(false);
-        btnGetWAVIndexes.setEnabled(false);
-        tblConfig.removeAllViews();
+        try {
+            ServiceHelper.getInstance().getWAVIndexes();
+            btnGetBMPIndexes.setEnabled(false);
+            btnGetWAVIndexes.setEnabled(false);
+            tblConfig.removeAllViews();
+        } catch (RemoteException exception){
+            Toast.makeText(getContext(), "Something went wrong", Toast.LENGTH_LONG).show();
+        }
     };
 
     View.OnClickListener displayExternal = v -> {
         try {
             ServiceHelper.getInstance().displayExternalReader();
         } catch (RemoteException ex){
-
+            Toast.makeText(getContext(), "Something went wrong", Toast.LENGTH_LONG).show();
         }
     };
 
@@ -205,45 +209,6 @@ public class ExternalFragment extends Fragment {
         btnUploadSound.setEnabled(false);
         btnUploadBackground.setEnabled(false);
     };
-
-    private void downloadFile(String url, File outputFile, @NonNull Button btn, String originalText) {
-        DataOutputStream fos = null;
-        try {
-            Log.d(TAG, "downloadFile: STARTING DOWNLOAD");
-            URL u = new URL(url);
-            URLConnection conn = u.openConnection();
-            int contentLength = conn.getContentLength();
-
-            DataInputStream stream = new DataInputStream(u.openStream());
-
-            byte[] buffer = new byte[contentLength];
-            stream.readFully(buffer);
-            stream.close();
-
-            fos = new DataOutputStream(new FileOutputStream(outputFile));
-            fos.write(buffer);
-            fos.flush();
-            fos.close();
-            Log.d(TAG, "downloadFile: FINISHED DOWNLOAD");
-            btn.setEnabled(true);
-            btn.setText(originalText);
-        } catch(IOException e) {
-            Log.d(TAG, "downloadFile: DOWNLOAD FAILED -> " + e.getLocalizedMessage());
-            btn.setTextSize(8);
-            btn.setEnabled(false);
-            btn.setText("FAILED");
-            return; // swallow a 404
-        } finally {
-            try {
-                if (fos != null){
-                    fos.flush();
-                    fos.close();
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
 
     private void populateConfigTable(String config){
         try {
@@ -297,6 +262,7 @@ public class ExternalFragment extends Fragment {
 
             switch(intent.getAction()){
                 case "UPLOADING_BMP":
+                    prgUploadProgress.setVisibility(View.VISIBLE);
                     Log.d("UPLOADING_BMP", String.valueOf(intent.getIntExtra("status", 0)));
                     Log.d("UPLOADING_BMP", String.valueOf(intent.getIntExtra("totalFrames",0)));
                     Log.d("UPLOADING_BMP", String.valueOf(intent.getIntExtra("framesCompleted",0)));
@@ -324,6 +290,7 @@ public class ExternalFragment extends Fragment {
                     }
                     break;
                 case "UPLOADING_WAV":
+                    prgUploadProgress.setVisibility(View.VISIBLE);
                     Log.d("UPLOADING_WAV", String.valueOf(intent.getIntExtra("status", 0)));
                     Log.d("UPLOADING_WAV", String.valueOf(intent.getIntExtra("totalFrames",0)));
                     Log.d("UPLOADING_WAV", String.valueOf(intent.getIntExtra("framesCompleted",0)));

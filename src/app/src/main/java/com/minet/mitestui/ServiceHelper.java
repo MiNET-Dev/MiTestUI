@@ -9,6 +9,7 @@ import android.os.RemoteException;
 import android.util.Log;
 import android.widget.Toast;
 
+import za.co.megaware.MinetService.ByteParceAble;
 import za.co.megaware.MinetService.IMainService;
 
 public class ServiceHelper implements ServiceConnection {
@@ -88,20 +89,12 @@ public class ServiceHelper implements ServiceConnection {
         }
     }
 
-    public void getBMPIndexes(){
-        try {
-            service.GetBMPIndexes();
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        }
+    public void getBMPIndexes() throws RemoteException {
+        service.GetBMPIndexes();
     }
 
-    public void getWAVIndexes(){
-        try {
-            service.GetWAVIndexes();
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        }
+    public void getWAVIndexes() throws RemoteException {
+        service.GetWAVIndexes();
     }
 
     public void uploadBMP(int index, String path, String name){
@@ -122,6 +115,10 @@ public class ServiceHelper implements ServiceConnection {
 
     public void displayExternalReader() throws RemoteException {
         service.DisplayExternalReader("v1000", 1, 1, 4);
+    }
+
+    public void print(ByteParceAble _data, int feedlines, boolean cutpartial, int printID) throws RemoteException {
+        service.PrintFunction(_data, feedlines, cutpartial, "MiDEVICE_PRINT-" + printID);
     }
 
 }

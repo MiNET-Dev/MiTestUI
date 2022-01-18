@@ -4,10 +4,32 @@
     android:layout_height="match_parent">
 
     <TextView
+        android:id="@+id/heading"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Printer Fragment"
-        android:textSize="30sp"
-        android:layout_centerInParent="true"/>
+        android:layout_centerInParent="false"
+        android:layout_margin="20sp"
+        android:text="Printer Testing"
+        android:textColor="@color/black"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+    <ImageView
+        android:id="@+id/img_bmp"
+        android:layout_width="match_parent"
+        android:layout_height="300sp"
+        android:layout_below="@+id/heading"
+        android:contentDescription="TestBMP"
+        android:scaleType="fitCenter" />
+
+    <Button
+        android:id="@+id/btn_print"
+        android:layout_width="100sp"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="10sp"
+        android:text="PRINT"
+        android:layout_alignParentBottom="true"
+        android:textSize="12sp" />
 
 </RelativeLayout>
