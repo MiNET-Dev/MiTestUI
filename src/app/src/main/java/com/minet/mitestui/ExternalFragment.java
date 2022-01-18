@@ -250,7 +250,14 @@ public class ExternalFragment extends Fragment {
                 tableRow.setPadding(0, 5,0,5);
             }
             tblConfig.addView(tableRow);
-        } catch (JSONException e) {
+        } catch (JSONException | NullPointerException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            btnGetBMPIndexes.setEnabled(true);
+            btnGetWAVIndexes.setEnabled(true);
+        } catch (Exception e){
             e.printStackTrace();
         }
     }
@@ -320,8 +327,6 @@ public class ExternalFragment extends Fragment {
                     break;
                 case "BMP_INDEX":
                     String config = intent.getStringExtra("indexData");
-                    btnGetBMPIndexes.setEnabled(true);
-                    btnGetWAVIndexes.setEnabled(true);
                     populateConfigTable(config);
                     break;
             }

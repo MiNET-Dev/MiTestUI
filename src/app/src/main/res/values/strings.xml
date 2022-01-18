@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">MiTestUI</string>
+    <string name="app_name">MiTEST</string>
 
     <!--to toggle the open close button
         of the navigation drawer-->

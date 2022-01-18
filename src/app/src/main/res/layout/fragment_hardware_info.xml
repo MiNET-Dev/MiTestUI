@@ -4,10 +4,46 @@
     android:layout_height="match_parent">
 
     <TextView
+        android:id="@+id/heading"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Device Info Fragment"
-        android:textSize="30sp"
-        android:layout_centerInParent="true"/>
+        android:layout_centerInParent="false"
+        android:layout_margin="20sp"
+        android:text="Hardware Information"
+        android:textColor="@color/black"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/txt_dev_details"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="15sp"
+        android:layout_below="@+id/heading"
+        android:text="SET DEVICE NUMBER:" />
+
+    <GridLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/txt_dev_details"
+        android:columnCount="2">
+
+        <EditText
+            android:id="@+id/inp_device_number"
+            android:layout_width="230sp"
+            android:hint="device number"
+            android:layout_marginRight="10sp"
+            android:layout_marginLeft="10sp"
+            android:foregroundTint="@color/ticketPro"
+            android:backgroundTint="@color/ticketPro"
+            android:layout_height="wrap_content" />
+
+        <Button
+            android:id="@+id/btn_save_device_number"
+            android:layout_width="wrap_content"
+            android:text="SAVE"
+            android:layout_height="wrap_content" />
+
+    </GridLayout>
 
 </RelativeLayout>

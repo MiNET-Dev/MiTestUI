@@ -96,8 +96,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             externalFilter.addAction("BMP_INDEX");
 
             this.registerReceiver(externalReaderReceiver, externalFilter, null, null);
-            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new PrinterFragment()).commit();
-            navigationView.setCheckedItem(R.id.nav_printer);
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new QCChecklistFragment()).commit();
+            navigationView.setCheckedItem(R.id.nav_qc_check);
             setTitle("Home");
         }
 
@@ -202,35 +202,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         drawerLayout.closeDrawer(GravityCompat.START);
 
         return true;
-    }
-
-    public void setDeviceNumber(){
-        File deviceNumberFile = new File(_DEVICE_NUMBER_PATH);
-
-        if (deviceNumberFile.exists()){
-            try {
-                BufferedReader reader = new BufferedReader(new FileReader(deviceNumberFile));
-
-                String currentLine;
-
-                while ((currentLine = reader.readLine()) != null){
-                    try {
-                        int deviceNumber = Integer.parseInt(currentLine);
-
-//                        m_uDeviceNumber.setText(String.format(Locale.getDefault(), "DEVICE %d", deviceNumber));
-                    } catch (NumberFormatException exception){
-                        Toast.makeText(getApplicationContext(), "Not a valid Device Number", Toast.LENGTH_LONG).show();
-//                        m_uDeviceNumber.setText("Name not set");
-                    }
-                }
-
-            } catch (IOException ex){
-                ex.printStackTrace();
-//                m_uDeviceNumber.setText("Error reading device number");
-            }
-        } else{
-//            m_uDeviceNumber.setText("Name not set");
-        }
     }
 
     public void checkPermissions(){
