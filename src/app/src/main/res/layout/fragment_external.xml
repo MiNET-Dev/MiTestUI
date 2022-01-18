@@ -4,10 +4,160 @@
     android:layout_height="match_parent">
 
     <TextView
+        android:id="@+id/heading"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:text="External Fragment"
-        android:textSize="30sp" />
+        android:layout_centerInParent="false"
+        android:layout_margin="20sp"
+        android:text="External Reader Configurations"
+        android:textColor="@color/black"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+    <LinearLayout
+        android:id="@+id/group_uploading"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/heading"
+        android:layout_centerInParent="true">
+
+        <Button
+            android:id="@+id/btn_upload_back"
+            android:layout_width="100sp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="5sp"
+            android:hapticFeedbackEnabled="true"
+            android:text="UPLOAD BACKGROUND"
+            android:textSize="8sp" />
+
+        <Button
+            android:id="@+id/btn_upload_overlay"
+            android:layout_width="100sp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5sp"
+            android:layout_marginEnd="5sp"
+            android:hapticFeedbackEnabled="true"
+            android:text="UPLOAD OVERLAY"
+            android:textSize="8sp" />
+
+        <Button
+            android:id="@+id/btn_upload_sound"
+            android:layout_width="100sp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5sp"
+            android:hapticFeedbackEnabled="true"
+            android:text="UPLOAD SOUND"
+            android:textSize="8sp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/group_indexes"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/group_uploading"
+        android:layout_centerInParent="true">
+
+        <Button
+            android:id="@+id/btn_get_bmp_indexes"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="5sp"
+            android:layout_width="100sp"
+            android:text="GET BMP CONFIG"
+            android:textSize="8sp" />
+
+        <Button
+            android:id="@+id/btn_get_wav_indexes"
+            android:layout_width="100sp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5sp"
+            android:layout_marginEnd="5sp"
+            android:text="GET WAV CONFIG"
+            android:textSize="8sp" />
+
+        <Button
+            android:id="@+id/btn_display_external"
+            android:layout_width="100sp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5sp"
+            android:text="DISPLAY EXTERNAL"
+            android:textSize="8sp" />
+
+    </LinearLayout>
+
+    <TableLayout
+        android:id="@+id/tbl_config"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/group_indexes"
+        android:layout_marginLeft="5sp"
+        android:columnCount="2"
+        android:rowCount="5">
+
+<!--        <TableRow-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:orientation="horizontal">-->
+
+<!--            <TextView-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:padding="0sp"-->
+<!--                android:text="NAME: "-->
+<!--                android:textColor="@color/black"-->
+<!--                android:textStyle="bold" />-->
+
+<!--            <TextView-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:padding="0sp"-->
+<!--                android:text="Background" />-->
+
+<!--            <RadioButton-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content" />-->
+
+<!--            <TextView-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:padding="0sp"-->
+<!--                android:text="NAME: "-->
+<!--                android:textColor="@color/black"-->
+<!--                android:textStyle="bold" />-->
+
+<!--            <TextView-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:padding="0sp"-->
+<!--                android:text="Background" />-->
+
+<!--            <RadioButton-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content" />-->
+<!--        </TableRow>-->
+
+    </TableLayout>
+
+    <TextView
+        android:id="@+id/txt_progress"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/upload_progress"
+        android:textAlignment="center"
+        android:textColor="@color/black"
+        android:textSize="15sp"
+        android:textStyle="bold" />
+
+    <ProgressBar
+        android:id="@+id/upload_progress"
+        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="10sp"
+        android:layout_marginEnd="10sp"
+        android:layout_marginBottom="15sp"
+        android:progressTint="@color/purple_500"
+        android:visibility="invisible" />
 
 </RelativeLayout>

@@ -4,17 +4,23 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.RemoteException;
+import android.os.StrictMode;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
@@ -39,6 +45,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public DrawerLayout drawerLayout;
     public ActionBarDrawerToggle actionBarDrawerToggle;
 
+    // BROADCAST RECEIVERS
+    ExternalFragment.ExternalReaderReceiver externalReaderReceiver;
+
     // TAGS
     private static final String MAIN_TAG = "MainActivity";
 
@@ -58,6 +67,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        checkPermissions();
+
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+
+        StrictMode.setThreadPolicy(policy);
+
         // drawer layout instance to toggle the menu icon to open
         // drawer and back button to close drawer
         drawerLayout = findViewById(R.id.my_drawer_layout);
@@ -72,8 +87,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         actionBarDrawerToggle.syncState();
 
         if (savedInstanceState == null){
-            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new LightsFragment()).commit();
-            navigationView.setCheckedItem(R.id.nav_lights);
+            // SETTING UP BROADCAST RECEIVERS
+            ExternalFragment externalFragment = new ExternalFragment();
+            externalReaderReceiver = externalFragment.new ExternalReaderReceiver();
+            IntentFilter externalFilter = new IntentFilter();
+            externalFilter.addAction("UPLOADING_BMP");
+            externalFilter.addAction("UPLOADING_WAV");
+            externalFilter.addAction("BMP_INDEX");
+
+            this.registerReceiver(externalReaderReceiver, externalFilter, null, null);
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, externalFragment).commit();
+            navigationView.setCheckedItem(R.id.nav_external);
             setTitle("Home");
         }
 
@@ -116,7 +140,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 setTitle("NFC's");
                 break;
             case R.id.nav_external:
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new ExternalFragment()).commit();
+                // SETTING UP BROADCAST RECEIVERS
+                ExternalFragment externalFragment = new ExternalFragment();
+                externalReaderReceiver = externalFragment.new ExternalReaderReceiver();
+                IntentFilter externalFilter = new IntentFilter();
+                externalFilter.addAction("UPLOADING_BMP");
+                externalFilter.addAction("UPLOADING_WAV");
+                externalFilter.addAction("BMP_INDEX");
+
+                this.registerReceiver(externalReaderReceiver, externalFilter, null, null);
+
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, externalFragment).commit();
                 setTitle("External Reader");
                 break;
             case R.id.nav_gps:
@@ -197,6 +231,32 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         } else{
 //            m_uDeviceNumber.setText("Name not set");
         }
+    }
+
+    public void checkPermissions(){
+        if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED ||
+                ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED ||
+                ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.WAKE_LOCK) == PackageManager.PERMISSION_DENIED ||
+                ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.INTERNET) == PackageManager.PERMISSION_DENIED ||
+                ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_DENIED ||
+                ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_DENIED ||
+                ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_DENIED ||
+                ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_WIFI_STATE) == PackageManager.PERMISSION_DENIED){
+            requestPermissions();
+        }
+    }
+
+    public void requestPermissions(){
+        ActivityCompat.requestPermissions(MainActivity.this, new String [] {
+                Manifest.permission.READ_EXTERNAL_STORAGE,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                Manifest.permission.WAKE_LOCK,
+                Manifest.permission.INTERNET,
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_COARSE_LOCATION,
+                Manifest.permission.CAMERA,
+                Manifest.permission.ACCESS_WIFI_STATE
+        }, 1000);
     }
 
 }

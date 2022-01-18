@@ -20,6 +20,8 @@ public class ServiceHelper implements ServiceConnection {
     // LATE INITIALIZATION SINGLETON
     private static volatile ServiceHelper INSTANCE;
 
+    private Context context;
+
     private boolean isConnected = false;
 
     // PRIVATE CONSTRUCTOR TO FORCE USE OF getInstance() TO CREATE SINGLETON OBJECT
@@ -42,6 +44,7 @@ public class ServiceHelper implements ServiceConnection {
     }
 
     public void initService(Context context){
+        this.context = context;
         Intent i = new Intent();
         i.setClassName("za.co.megaware.MinetService", "za.co.megaware.MinetService.MainService");
         boolean ret = context.bindService(i, INSTANCE, Context.BIND_IMPORTANT);
@@ -57,6 +60,7 @@ public class ServiceHelper implements ServiceConnection {
 //        startBootStrapTimer(false);
 
         Log.d(TAG, "onServiceConnected() connected");
+        Toast.makeText(context.getApplicationContext(), "Service Connected", Toast.LENGTH_LONG).show();
     }
 
     @Override
@@ -64,16 +68,60 @@ public class ServiceHelper implements ServiceConnection {
         service = null;
         Log.d(TAG, "onServiceDisconnected() Disconnected");
         isConnected = false;
-//        Toast.makeText(MainActivity.this, "Service Disconnected", Toast.LENGTH_LONG).show();
+        Toast.makeText(context.getApplicationContext(), "Service Disconnected", Toast.LENGTH_LONG).show();
     }
 
-    public void TestLights(String color){
+    public void testLights(String color){
         try {
             if (isConnected)
                 service.DoBlinkStatic(color);
         } catch (RemoteException e){
-            Log.e(TAG, "TestLights: error -> " + e.getLocalizedMessage() );
+            Log.e(TAG, "TestLights: error -> " + e.getLocalizedMessage());
         }
+    }
+
+    public void doBlink(int readerNo, String color, int iterations){
+        try {
+            service.DoBlink(readerNo, color, iterations);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void getBMPIndexes(){
+        try {
+            service.GetBMPIndexes();
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void getWAVIndexes(){
+        try {
+            service.GetWAVIndexes();
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void uploadBMP(int index, String path, String name){
+        try {
+            service.ConfigureBMP(index, path, name);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void uploadWAV(int index, String path, String name){
+        try {
+            service.ConfigureAudio(index, path, name);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void displayExternalReader() throws RemoteException {
+        service.DisplayExternalReader("v1000", 1, 1, 4);
     }
 
 }

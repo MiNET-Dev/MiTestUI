@@ -62,31 +62,31 @@ public class LightsFragment extends Fragment {
 
         switch (v.getId()){
             case R.id.btn_red:
-                ServiceHelper.getInstance().TestLights("red");
+                ServiceHelper.getInstance().testLights("red");
                 break;
             case R.id.btn_green:
-                ServiceHelper.getInstance().TestLights("green");
+                ServiceHelper.getInstance().testLights("green");
                 break;
             case R.id.btn_white:
-                ServiceHelper.getInstance().TestLights("white");
+                ServiceHelper.getInstance().testLights("white");
                 break;
             case R.id.btn_yellow:
-                ServiceHelper.getInstance().TestLights("yellow");
+                ServiceHelper.getInstance().testLights("yellow");
                 break;
             case R.id.btn_blue:
-                ServiceHelper.getInstance().TestLights("blue");
+                ServiceHelper.getInstance().testLights("blue");
                 break;
             case R.id.btn_cyan:
-                ServiceHelper.getInstance().TestLights("cyan");
+                ServiceHelper.getInstance().testLights("cyan");
                 break;
             case R.id.btn_orange:
-                ServiceHelper.getInstance().TestLights("orange");
+                ServiceHelper.getInstance().testLights("orange");
                 break;
             case R.id.btn_magenta:
-                ServiceHelper.getInstance().TestLights("magenta");
+                ServiceHelper.getInstance().testLights("magenta");
                 break;
             case R.id.btn_off:
-                ServiceHelper.getInstance().TestLights("off");
+                ServiceHelper.getInstance().testLights("off");
                 break;
         }
 
