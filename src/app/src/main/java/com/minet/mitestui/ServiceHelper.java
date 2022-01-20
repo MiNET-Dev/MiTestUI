@@ -59,11 +59,15 @@ public class ServiceHelper implements ServiceConnection {
     }
 
     public void initService(Context context){
-        this.context = context;
-        Intent i = new Intent();
-        i.setClassName("za.co.megaware.MinetService", "za.co.megaware.MinetService.MainService");
-        boolean ret = context.bindService(i, INSTANCE, Context.BIND_IMPORTANT);
-        Log.d(TAG, "initService() bound with " + ret);
+        try{
+            this.context = context;
+            Intent i = new Intent();
+            i.setClassName("za.co.megaware.MinetService", "za.co.megaware.MinetService.MainService");
+            boolean ret = context.bindService(i, INSTANCE, Context.BIND_IMPORTANT);
+            Log.d(TAG, "initService() bound with " + ret);
+        } catch (Exception ex){
+            Toast.makeText(context.getApplicationContext(), "Error on Service connection", Toast.LENGTH_LONG).show();
+        }
     }
 
     @Override

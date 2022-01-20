@@ -27,7 +27,7 @@ import android.view.MenuItem;
 import android.widget.Toast;
 import android.widget.Toolbar;
 
-import com.google.android.material.navigation.NavigationBarView;
+//import com.google.android.material.navigation.NavigationBarView;
 import com.google.android.material.navigation.NavigationView;
 
 import java.io.BufferedReader;
@@ -88,16 +88,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         if (savedInstanceState == null){
             // SETTING UP BROADCAST RECEIVERS
-            ExternalFragment externalFragment = new ExternalFragment();
-            externalReaderReceiver = externalFragment.new ExternalReaderReceiver();
-            IntentFilter externalFilter = new IntentFilter();
-            externalFilter.addAction("UPLOADING_BMP");
-            externalFilter.addAction("UPLOADING_WAV");
-            externalFilter.addAction("BMP_INDEX");
+//            ExternalFragment externalFragment = new ExternalFragment();
+//            externalReaderReceiver = externalFragment.new ExternalReaderReceiver();
+//            IntentFilter externalFilter = new IntentFilter();
+//            externalFilter.addAction("UPLOADING_BMP");
+//            externalFilter.addAction("UPLOADING_WAV");
+//            externalFilter.addAction("BMP_INDEX");
 
-            this.registerReceiver(externalReaderReceiver, externalFilter, null, null);
-            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new QCChecklistFragment()).commit();
-            navigationView.setCheckedItem(R.id.nav_qc_check);
+//            this.registerReceiver(externalReaderReceiver, externalFilter, null, null);
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new HomeFragment()).commit();
+            navigationView.setCheckedItem(R.id.nav_home);
             setTitle("Home");
         }
 

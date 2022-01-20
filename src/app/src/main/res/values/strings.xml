@@ -5,4 +5,12 @@
         of the navigation drawer-->
     <string name="nav_open">Open</string>
     <string name="nav_close">Close</string>
+
+    <string name="qc_init">Initial Setup:</string>
+    <string name="qc_physical">Physical Examination:</string>
+    <string name="qc_default_settings">Default Settings:</string>
+    <string name="qc_dev_func">Device Functionality:</string>
+    <string name="qc_setup">Setup &amp; Cross-Check:</string>
+    <string name="qc_kiosk">Kiosk Mode:</string>
+
 </resources>

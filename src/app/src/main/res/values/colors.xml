@@ -17,5 +17,10 @@
     <color name="orange">#fa8900</color>
     <color name="off">#FF000000</color>
 
+    <color name="btnGreen">#4CAF50</color>
+    <color name="btnRed">#E53935</color>
+    <color name="btnBlue">#039BE5</color>
+
+
     <color name="ticketPro">#FF8F00</color>
 </resources>

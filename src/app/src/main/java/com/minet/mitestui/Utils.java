@@ -1,10 +1,13 @@
 package com.minet.mitestui;
 
+import android.os.Environment;
 import android.util.Log;
 import android.widget.Button;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -12,14 +15,19 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.ArrayList;
+import java.util.Locale;
 
 public class Utils {
 
     private static final String TAG = "UTILS";
+
+    private static final String _DEVICE_NUMBER_PATH = "/storage/emulated/0/MiDEVICE/format.mi";
 
     public static void downloadFile(String url, File outputFile, @NonNull Button btn, String originalText) {
         DataOutputStream fos = null;
@@ -125,6 +133,86 @@ public class Utils {
         catch (IOException e) {
             Log.e(TAG, "writeToFile: ERROR -> " + e.getLocalizedMessage());
         }
+    }
+
+    public static void writeToFile(File outputFile, ArrayList<String> data, boolean append) {
+        try {
+            // INITIALIZING STREAMS
+            FileOutputStream fOut = new FileOutputStream(outputFile, append);
+            BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fOut));
+
+            for (String line : data) {
+                // WRITING DATA TO CACHE FILE
+                bw.write(line);
+                // ADDING A NEW LINE
+                bw.newLine();
+            }
+
+            // CLOSING STREAMS
+            bw.close();
+            fOut.close();
+        }
+        catch (IOException e) {
+            Log.e(TAG, "writeToFile: ERROR -> " + e.getLocalizedMessage());
+        }
+    }
+
+    public static boolean CheckDirectory(String pathName){
+        try {
+            // Setting a known location for MiNETServiceData logs
+            File _DIRECTORY = new File(Environment.getExternalStorageDirectory() + pathName);
+            // Checks to see if directory exists
+            if (!_DIRECTORY.exists()){
+                // If dir does not exist, try create one and return the status of if the dir was created
+                return _DIRECTORY.mkdirs();
+            } else return true;
+        } catch (Exception exec){
+            // Error occurred when creating the new dir
+            Log.e(TAG, "CheckDirectory: " + exec.getLocalizedMessage());
+            return false;
+        }
+    }
+
+    public static boolean CheckFile(String pathName){
+        try {
+            // Setting a known location for MiNETServiceData logs
+            File _DIRECTORY = new File(Environment.getExternalStorageDirectory() + pathName);
+            // Checks to see if directory exists
+            if (!_DIRECTORY.exists()){
+                // If dir does not exist, try create one and return the status of if the dir was created
+                return _DIRECTORY.createNewFile();
+            } else return true;
+        } catch (Exception exec){
+            // Error occurred when creating the new dir
+            Log.e(TAG, "CheckDirectory: " + exec.getLocalizedMessage());
+            return false;
+        }
+    }
+
+    public static int GetDeviceNumber(){
+        File deviceNumberFile = new File(_DEVICE_NUMBER_PATH);
+
+        int deviceNumber = -1;
+
+        if (deviceNumberFile.exists()){
+            try {
+                BufferedReader reader = new BufferedReader(new FileReader(deviceNumberFile));
+
+                String currentLine;
+
+                while ((currentLine = reader.readLine()) != null){
+                    try {
+                        deviceNumber = Integer.parseInt(currentLine);
+                    } catch (NumberFormatException exception){
+                        deviceNumber = -1;
+                    }
+                }
+
+            } catch (IOException ex){
+                ex.printStackTrace();
+            }
+        }
+        return deviceNumber;
     }
 
     public static class ByteStream{
