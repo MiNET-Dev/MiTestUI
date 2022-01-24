@@ -7,6 +7,7 @@ import android.content.res.ColorStateList;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.RemoteException;
 import android.util.AttributeSet;
@@ -27,6 +28,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 
 import org.json.JSONArray;
@@ -264,6 +266,7 @@ public class ExternalFragment extends Fragment {
 
     public class ExternalReaderReceiver extends BroadcastReceiver {
 
+        @RequiresApi(api = Build.VERSION_CODES.N)
         @Override
         public void onReceive(Context context, Intent intent) {
 

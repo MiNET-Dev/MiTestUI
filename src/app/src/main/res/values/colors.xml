@@ -21,6 +21,6 @@
     <color name="btnRed">#E53935</color>
     <color name="btnBlue">#039BE5</color>
 
-
+    <color name="bgFadedGreen">#C8E6C9</color>
     <color name="ticketPro">#FF8F00</color>
 </resources>

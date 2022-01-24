@@ -1,6 +1,7 @@
 package com.minet.mitestui;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
@@ -17,6 +18,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.RemoteException;
@@ -47,6 +49,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     // BROADCAST RECEIVERS
     ExternalFragment.ExternalReaderReceiver externalReaderReceiver;
+    NFCFragment.NFCReceiver nfcReceiver;
 
     // TAGS
     private static final String MAIN_TAG = "MainActivity";
@@ -59,7 +62,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        unbindService((ServiceConnection) ServiceHelper.getInstance());
+        unbindService(ServiceHelper.getInstance());
     }
 
     @Override
@@ -87,15 +90,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         actionBarDrawerToggle.syncState();
 
         if (savedInstanceState == null){
-            // SETTING UP BROADCAST RECEIVERS
-//            ExternalFragment externalFragment = new ExternalFragment();
-//            externalReaderReceiver = externalFragment.new ExternalReaderReceiver();
-//            IntentFilter externalFilter = new IntentFilter();
-//            externalFilter.addAction("UPLOADING_BMP");
-//            externalFilter.addAction("UPLOADING_WAV");
-//            externalFilter.addAction("BMP_INDEX");
-
-//            this.registerReceiver(externalReaderReceiver, externalFilter, null, null);
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new HomeFragment()).commit();
             navigationView.setCheckedItem(R.id.nav_home);
             setTitle("Home");
@@ -122,6 +116,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return super.onOptionsItemSelected(item);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     @SuppressLint("NonConstantResourceId")
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -136,7 +131,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 setTitle("Printer");
                 break;
             case R.id.nav_nfc:
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new NFCFragment()).commit();
+                // SETTING UP BROADCAST RECEIVERS
+                NFCFragment nfcFragment = new NFCFragment();
+                nfcReceiver = nfcFragment.new NFCReceiver();
+                IntentFilter nfcFilter = new IntentFilter();
+                nfcFilter.addAction("MIFARE_PRESENT");
+                nfcFilter.addAction("MIFARE_REMOVED");
+
+                this.registerReceiver(nfcReceiver, nfcFilter, null, null);
+
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, nfcFragment).commit();
                 setTitle("NFC's");
                 break;
             case R.id.nav_external:

@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/tbl_device_nfc_info"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="20sp"
+    android:layout_marginTop="10sp"
+    android:layout_marginBottom="20sp"
+    android:background="@drawable/border"
+    android:elevation="7dp"
+    android:padding="10sp"
+    android:stretchColumns="*">
+
+    <TableRow>
+
+        <TextView
+            android:text="Device:"
+            android:textColor="@color/black"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/txt_device"
+            android:text="0" />
+
+        <TextView
+            android:text="HW:"
+            android:textColor="@color/black"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/txt_hw_version"
+            android:layout_weight="5"
+            android:text="1.0.89" />
+    </TableRow>
+
+    <TableRow>
+
+        <TextView
+            android:text="UUID:"
+            android:textColor="@color/black"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/txt_uuid"
+            android:text="34060000" />
+
+        <TextView
+            android:text="SW:"
+            android:textColor="@color/black"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/txt_sw_version"
+            android:text="1.9.350" />
+    </TableRow>
+
+    <TableRow>
+
+        <TextView
+            android:text="Capabilities:"
+            android:textColor="@color/black"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/txt_capabilities"
+            android:layout_width="100sp"
+            android:text="Motherboard dadadadadadadad" />
+    </TableRow>
+
+    <TextView
+        android:id="@+id/txt_card_data_header"
+        android:text="CARD DATA: "
+        android:textColor="@color/black"
+        android:visibility="gone"
+        android:textStyle="bold" />
+
+    <TextView
+        android:visibility="gone"
+        android:id="@+id/txt_card_data_value" />
+
+</TableLayout>

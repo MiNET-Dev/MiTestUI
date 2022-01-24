@@ -33,7 +33,7 @@ public class ServiceHelper implements ServiceConnection {
     public static final byte PRINTER = 6;
 
     // DEVICE INFO DETAILS
-    LinkedHashMap<Integer, ArrayList<String>> map_device_info_display = new LinkedHashMap<>();
+    private LinkedHashMap<Integer, ArrayList<String>> map_device_info_display = new LinkedHashMap<>();
 
     private Context context;
 
@@ -95,9 +95,14 @@ public class ServiceHelper implements ServiceConnection {
         Toast.makeText(context.getApplicationContext(), "Service Disconnected", Toast.LENGTH_LONG).show();
     }
 
+    public LinkedHashMap<Integer, ArrayList<String>> deviceInfoData(){
+        return map_device_info_display;
+    }
+
     private void ProcessDeviceInfo(byte[] buff) {
 
         try {
+            map_device_info_display.clear();
             // Auto Populating the Spinner list for NFC's that are available
             ArrayList<String> arraySpinner = new ArrayList<String>();
 
@@ -268,6 +273,14 @@ public class ServiceHelper implements ServiceConnection {
 
     public boolean[] getTamperStates() throws RemoteException {
         return service.GetTamperStatus();
+    }
+
+    public void getAllDeviceInfo(){
+        try {
+            ProcessDeviceInfo(service.GetAllDeviceInfo());
+        } catch (RemoteException exception) {
+            Toast.makeText(context.getApplicationContext(), "Could not get device info", Toast.LENGTH_LONG).show();
+        }
     }
 
 }

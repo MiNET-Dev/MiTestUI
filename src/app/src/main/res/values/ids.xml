@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="device_one" type="id"></item>
+    <item name="device_two" type="id"></item>
+    <item name="device_three" type="id"></item>
+</resources>
