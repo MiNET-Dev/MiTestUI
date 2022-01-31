@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="NoConnectionState">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginLeft">20dp</item>
+        <item name="android:layout_marginBottom">4dp</item>
+        <item name="android:textSize">30sp</item>
+
+        <item name="android:drawableBottom">@drawable/ic_camera</item>
+        <item name="android:textColor">#d2d2d2</item>
+    </style>
+
+</resources>

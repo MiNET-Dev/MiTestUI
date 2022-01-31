@@ -18,6 +18,7 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
@@ -213,6 +214,18 @@ public class Utils {
             }
         }
         return deviceNumber;
+    }
+
+    public static ConnectivityState hasActiveInternetConnection() {
+        try {
+            HttpURLConnection url = (HttpURLConnection)
+                    (new URL("http://clients3.google.com/generate_204")
+                            .openConnection());
+            return (url.getResponseCode() == 204 && url.getContentLength() == 0) ? ConnectivityState.CONNECTED : ConnectivityState.NOT_CONNECTED;
+        } catch (IOException e) {
+            Log.e(TAG, "hasActiveInternetConnection: ERROR -> " + e.getLocalizedMessage());
+            return ConnectivityState.NOT_CONNECTED;
+        }
     }
 
     public static class ByteStream{

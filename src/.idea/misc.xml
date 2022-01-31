@@ -5,14 +5,19 @@
       <map>
         <entry key="app/src/main/res/drawable/border.xml" value="0.2898148148148148" />
         <entry key="app/src/main/res/drawable/border_green.xml" value="0.2861111111111111" />
+        <entry key="app/src/main/res/drawable/circle.xml" value="0.151" />
+        <entry key="app/src/main/res/drawable/ic_camera.xml" value="0.151" />
         <entry key="app/src/main/res/drawable/ic_check.xml" value="0.2962962962962963" />
         <entry key="app/src/main/res/drawable/ic_external.xml" value="0.2898148148148148" />
+        <entry key="app/src/main/res/drawable/ic_no_connection.xml" value="0.151" />
+        <entry key="app/src/main/res/drawable/rounded_textview.xml" value="0.151" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.25" />
         <entry key="app/src/main/res/layout/custom_actionbar.xml" value="0.2953125" />
         <entry key="app/src/main/res/layout/fragment_External.xml" value="0.2953125" />
         <entry key="app/src/main/res/layout/fragment_about.xml" value="0.2953125" />
         <entry key="app/src/main/res/layout/fragment_camera.xml" value="0.2953125" />
         <entry key="app/src/main/res/layout/fragment_device_info.xml" value="0.2953125" />
+        <entry key="app/src/main/res/layout/fragment_dialog_signin.xml" value="0.2953125" />
         <entry key="app/src/main/res/layout/fragment_external.xml" value="0.3088551429176712" />
         <entry key="app/src/main/res/layout/fragment_feedback.xml" value="0.2953125" />
         <entry key="app/src/main/res/layout/fragment_gps.xml" value="0.2953125" />

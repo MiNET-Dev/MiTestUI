@@ -9,6 +9,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.DialogFragment;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -25,12 +26,16 @@ import android.os.RemoteException;
 import android.os.StrictMode;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 import android.widget.Toolbar;
 
 //import com.google.android.material.navigation.NavigationBarView;
+import com.google.android.material.internal.NavigationMenu;
 import com.google.android.material.navigation.NavigationView;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -39,9 +44,13 @@ import java.io.IOException;
 import java.util.Locale;
 import java.util.Objects;
 
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 import za.co.megaware.MinetService.IMainService;
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, LoginDialogFragment.LoginDialogListener {
 
     // UI ELEMENTS
     public DrawerLayout drawerLayout;
@@ -58,6 +67,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private final String _DOWNLOAD_URL = "http://www.minet.co.za/boot/b.bmp";
     private final String _DESTINATION_PATH = "/storage/emulated/0/Download/b.bmp";
     private final String _DEVICE_NUMBER_PATH = "/storage/emulated/0/MiDEVICE/format.mi";
+
+    // FRAGMENTS
+    HomeFragment homeFragment;
+    NavigationView navigationView;
+    Menu navigationMenu;
+
+    private TechnicianModel loggedInUser = null;
+
+    APIStore apiStore;
 
     @Override
     protected void onDestroy() {
@@ -81,16 +99,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         drawerLayout = findViewById(R.id.my_drawer_layout);
         actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.nav_open, R.string.nav_close);
 
-        NavigationView navigationView = findViewById(R.id.nav_view);
+        navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        navigationMenu = navigationView.getMenu();
 
         // pass the Open and Close toggle for the drawer layout listener
         // to toggle the button
         drawerLayout.addDrawerListener(actionBarDrawerToggle);
         actionBarDrawerToggle.syncState();
 
-        if (savedInstanceState == null){
-            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new HomeFragment()).commit();
+        if (savedInstanceState == null) {
+            homeFragment = new HomeFragment();
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, homeFragment).commit();
             navigationView.setCheckedItem(R.id.nav_home);
             setTitle("Home");
         }
@@ -99,6 +120,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
         ServiceHelper.getInstance().initService(getApplicationContext());
+
+        setLoggedIn(false);
     }
 
     // override the onOptionsItemSelected()
@@ -121,9 +144,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
 
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             case R.id.nav_home:
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new HomeFragment()).commit();
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, homeFragment).commit();
+
+                homeFragment.setTechnician(loggedInUser);
+                setLoggedIn(true);
+
                 setTitle("Home");
                 break;
             case R.id.nav_printer:
@@ -208,7 +235,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return true;
     }
 
-    public void checkPermissions(){
+    public void checkPermissions() {
         if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED ||
                 ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED ||
                 ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.WAKE_LOCK) == PackageManager.PERMISSION_DENIED ||
@@ -216,13 +243,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_DENIED ||
                 ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_DENIED ||
                 ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_DENIED ||
-                ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_WIFI_STATE) == PackageManager.PERMISSION_DENIED){
+                ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_WIFI_STATE) == PackageManager.PERMISSION_DENIED) {
             requestPermissions();
         }
     }
 
-    public void requestPermissions(){
-        ActivityCompat.requestPermissions(MainActivity.this, new String [] {
+    public void requestPermissions() {
+        ActivityCompat.requestPermissions(MainActivity.this, new String[]{
                 Manifest.permission.READ_EXTERNAL_STORAGE,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE,
                 Manifest.permission.WAKE_LOCK,
@@ -234,4 +261,77 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }, 1000);
     }
 
+    @Override
+    public void onLoginDialogPositiveClick(DialogFragment dialog, String username, String pin) {
+        apiStore = new APIStore();
+        homeFragment.setLoggingIn(true);
+        try {
+            apiStore.Login(username, pin, loginResponse);
+        } catch (Exception ex){
+            //
+        }
+    }
+
+    Callback<ResponseBody> loginResponse = new Callback<ResponseBody>() {
+        @Override
+        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+            Log.d("retrofit", "Send Data success");
+            try {
+
+                if (response.isSuccessful()){
+                    String  bodyString = new String(response.body().bytes());
+                    homeFragment.setLoggingIn(false);
+
+                    Gson gson = new GsonBuilder().create();
+                    try {
+                        loggedInUser = gson.fromJson(bodyString, TechnicianModel.class);
+                        homeFragment.setTechnician(loggedInUser);
+                        setLoggedIn(true);
+                    } catch (Exception e) {
+                        // handle failure to read error
+                        Log.v("gson error","error when gson process");
+                        Toast.makeText(getApplicationContext(), "error logging in", Toast.LENGTH_LONG).show();
+                    }
+
+                } else {
+                    // FAILED
+                    Log.e(MAIN_TAG, "onResponse: error logging in");
+                    Toast.makeText(getApplicationContext(), "error logging in", Toast.LENGTH_LONG).show();
+                }
+
+            } catch (IOException e) {
+                Log.e(MAIN_TAG, "onResponse: error -> " + e.getLocalizedMessage());
+                Toast.makeText(getApplicationContext(), "error logging in", Toast.LENGTH_LONG).show();
+            }
+        }
+
+        @Override
+        public void onFailure(Call<ResponseBody> call, Throwable t) {
+            Log.d("retrofit", "Send Data failure");
+            homeFragment.setLoggingIn(false);
+            Toast.makeText(getApplicationContext(), "error logging in", Toast.LENGTH_LONG).show();
+        }
+    };
+
+    private void setLoggedIn(boolean isLoggedIn) {
+        navigationMenu.findItem(R.id.nav_printer).setEnabled(isLoggedIn);
+        navigationMenu.findItem(R.id.nav_nfc).setEnabled(isLoggedIn);
+        navigationMenu.findItem(R.id.nav_external).setEnabled(isLoggedIn);
+        navigationMenu.findItem(R.id.nav_gps).setEnabled(isLoggedIn);
+        navigationMenu.findItem(R.id.nav_lights).setEnabled(isLoggedIn);
+        navigationMenu.findItem(R.id.nav_camera).setEnabled(isLoggedIn);
+        navigationMenu.findItem(R.id.nav_hardware_info).setEnabled(isLoggedIn);
+        navigationMenu.findItem(R.id.nav_about).setEnabled(isLoggedIn);
+        navigationMenu.findItem(R.id.nav_tampers).setEnabled(isLoggedIn);
+        navigationMenu.findItem(R.id.nav_telemetry).setEnabled(isLoggedIn);
+        navigationMenu.findItem(R.id.nav_service_info).setEnabled(isLoggedIn);
+        navigationMenu.findItem(R.id.nav_updates).setEnabled(isLoggedIn);
+        navigationMenu.findItem(R.id.nav_qc_check).setEnabled(isLoggedIn);
+        navigationMenu.findItem(R.id.nav_feedback).setEnabled(isLoggedIn);
+    }
+
+    @Override
+    public void onLoginDialogNegativeClick(DialogFragment dialog) {
+        dialog.getDialog().cancel();
+    }
 }

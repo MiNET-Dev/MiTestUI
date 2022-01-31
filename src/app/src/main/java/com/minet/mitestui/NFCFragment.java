@@ -72,7 +72,6 @@ public class NFCFragment extends Fragment {
 
                 int counter = 1;
                 for (String data : Objects.requireNonNull(mappedDevices.get(key))) {
-                    Log.e(TAG, "displayUI: " + data);
 
                     if (counter == 2){
                         deviceId = data.split(" ")[1];

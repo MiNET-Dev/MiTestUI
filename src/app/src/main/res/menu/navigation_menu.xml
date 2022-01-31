@@ -6,9 +6,9 @@
 
     <item
         android:id="@+id/nav_home"
+        android:checkable="true"
         android:icon="@drawable/ic_home"
-        android:title="Home"
-        android:checkable="true" />
+        android:title="Home" />
 
     <item android:title="Hardware Testing">
         <menu>
@@ -55,28 +55,28 @@
 
                 <item
                     android:id="@+id/nav_hardware_info"
-                    android:title="Hardware Information"
-                    android:icon="@drawable/ic_hardware_info" />
+                    android:icon="@drawable/ic_hardware_info"
+                    android:title="Hardware Information" />
 
                 <item
                     android:id="@+id/nav_about"
-                    android:title="About"
-                    android:icon="@drawable/ic_info" />
+                    android:icon="@drawable/ic_info"
+                    android:title="About" />
 
                 <item
                     android:id="@+id/nav_tampers"
-                    android:title="Tampers"
-                    android:icon="@drawable/ic_tamper" />
+                    android:icon="@drawable/ic_tamper"
+                    android:title="Tampers" />
 
                 <item
                     android:id="@+id/nav_telemetry"
-                    android:title="Telemetry"
-                    android:icon="@drawable/ic_telemetry" />
+                    android:icon="@drawable/ic_telemetry"
+                    android:title="Telemetry" />
 
                 <item
                     android:id="@+id/nav_service_info"
-                    android:title="Service Info"
-                    android:icon="@drawable/ic_service_info" />
+                    android:icon="@drawable/ic_service_info"
+                    android:title="Service Info" />
 
             </group>
         </menu>
@@ -88,18 +88,18 @@
 
                 <item
                     android:id="@+id/nav_updates"
-                    android:title="Software Updates"
-                    android:icon="@drawable/ic_updates" />
+                    android:icon="@drawable/ic_updates"
+                    android:title="Software Updates" />
 
                 <item
                     android:id="@+id/nav_qc_check"
-                    android:title="QC Checklist"
-                    android:icon="@drawable/ic_qc_checklist" />
+                    android:icon="@drawable/ic_qc_checklist"
+                    android:title="QC Checklist" />
 
                 <item
                     android:id="@+id/nav_feedback"
-                    android:title="Provide Feedback"
-                    android:icon="@drawable/ic_feedback" />
+                    android:icon="@drawable/ic_feedback"
+                    android:title="Provide Feedback" />
 
             </group>
         </menu>
