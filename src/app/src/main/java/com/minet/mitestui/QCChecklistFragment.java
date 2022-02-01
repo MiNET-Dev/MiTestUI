@@ -48,8 +48,8 @@ public class QCChecklistFragment extends Fragment implements FTPAsyncResponse {
             }
     );
 
-    HashMap<Integer, Boolean> checkBoxMap = new HashMap<>();
-    HashMap<Integer, Boolean> savedCheckBoxMap = new HashMap<>();
+    HashMap<Integer, QCCheckListInfo> checkBoxMap = new HashMap<>();
+    HashMap<Integer, QCCheckListInfo> savedCheckBoxMap = new HashMap<>();
 
     CheckBox initCheck;
 
@@ -97,11 +97,17 @@ public class QCChecklistFragment extends Fragment implements FTPAsyncResponse {
         btnSave.setClickable(false);
         btnRefresh.setClickable(false);
         for (Integer key : checkBoxMap.keySet()) {
-            checkBoxMap.replace(key, false);
+            QCCheckListInfo _temp = checkBoxMap.get(key);
+            if (_temp != null)
+                _temp.setIsChecked(false);
+            checkBoxMap.replace(key, _temp);
         }
 
         for (Integer key : savedCheckBoxMap.keySet()) {
-            savedCheckBoxMap.replace(key, false);
+            QCCheckListInfo _temp = savedCheckBoxMap.get(key);
+            if (_temp != null)
+                _temp.setIsChecked(false);
+            savedCheckBoxMap.replace(key, _temp);
         }
 
         configureAllCheckBoxes(QCCheckView);
@@ -171,13 +177,18 @@ public class QCChecklistFragment extends Fragment implements FTPAsyncResponse {
         for(View mView: returnViews){
             if(mView instanceof CheckBox){
 
+                if (mView.getId() == R.id.chk_init_dev_number) {
+                    isInitChecked = ((CheckBox) mView).isChecked();
+                    disableEnableControls(((CheckBox) mView).isChecked(), qcLayout);
+                }
+
                 for (Integer key : savedCheckBoxMap.keySet()) {
                     if (mView.getId() == key){
                         try {
-                            ((CheckBox) mView).setChecked(savedCheckBoxMap.get(key));
+                            ((CheckBox) mView).setChecked(savedCheckBoxMap.get(key).getIsChecked());
 
                             if (mView.getId() == R.id.chk_init_dev_number) {
-                                isInitChecked = savedCheckBoxMap.get(key);
+                                isInitChecked = savedCheckBoxMap.get(key).getIsChecked();
                                 try {
                                     disableEnableControls(isInitChecked, qcLayout);
                                 } catch (NullPointerException exception){
@@ -194,7 +205,14 @@ public class QCChecklistFragment extends Fragment implements FTPAsyncResponse {
 
                 ((CheckBox) mView).setOnCheckedChangeListener(checkChanged);
 
-                checkBoxMap.put(mView.getId(), ((CheckBox) mView).isChecked());
+                if (savedCheckBoxMap.size() == 0)
+                    checkBoxMap.put(mView.getId(), new QCCheckListInfo(((CheckBox) mView).isChecked(), ((CheckBox) mView).isChecked() ? MainActivity.loggedInUser.getName() : "null"));
+            }
+        }
+
+        if (savedCheckBoxMap.size() > 0){
+            for (Integer key : savedCheckBoxMap.keySet()) {
+                checkBoxMap.put(key, new QCCheckListInfo(savedCheckBoxMap.get(key).getIsChecked(), savedCheckBoxMap.get(key).getQCName()));
             }
         }
     }
@@ -207,7 +225,9 @@ public class QCChecklistFragment extends Fragment implements FTPAsyncResponse {
                 ArrayList<String> _tempSet = new ArrayList<>();
 
                 for (Integer key : checkBoxMap.keySet()) {
-                    _tempSet.add(key + "," + checkBoxMap.get(key));
+                    String valueToAdd = key + "," + checkBoxMap.get(key).getIsChecked() + "," + checkBoxMap.get(key).getQCName();
+                    _tempSet.add(valueToAdd);
+
                 }
 
                 if (Utils.GetDeviceNumber() == -1){
@@ -237,9 +257,9 @@ public class QCChecklistFragment extends Fragment implements FTPAsyncResponse {
                 String[] _temp = line.split(",");
 
                 if (_temp[1].equals("true"))
-                    savedCheckBoxMap.put(Integer.valueOf(_temp[0]), true);
+                    savedCheckBoxMap.put(Integer.valueOf(_temp[0]), new QCCheckListInfo(true, _temp[2]));
                 else
-                    savedCheckBoxMap.put(Integer.valueOf(_temp[0]), false);
+                    savedCheckBoxMap.put(Integer.valueOf(_temp[0]), new QCCheckListInfo(false, _temp[2]));
 
                 line = reader.readLine();
             }
@@ -255,7 +275,13 @@ public class QCChecklistFragment extends Fragment implements FTPAsyncResponse {
                 disableEnableControls(isChecked, qcLayout);
             }
 
-            checkBoxMap.replace(compoundButton.getId(), isChecked);
+            QCCheckListInfo _temp = checkBoxMap.get(compoundButton.getId());
+            if (_temp != null) {
+                _temp.setIsChecked(isChecked);
+                _temp.setQCName(MainActivity.loggedInUser.getName());
+            }
+
+            checkBoxMap.replace(compoundButton.getId(), _temp);
             Boolean didSave = saveQCChecklist();
             if (!didSave) Toast.makeText(getContext(), "Something went wrong with quick saving", Toast.LENGTH_LONG).show();
         } catch (Exception exception){
