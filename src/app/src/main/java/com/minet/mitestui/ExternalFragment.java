@@ -42,6 +42,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.Objects;
 
 public class ExternalFragment extends Fragment {
 
@@ -84,6 +87,8 @@ public class ExternalFragment extends Fragment {
                     Color.GREEN //enabled
             }
     );
+
+    LinkedHashMap<Integer, ArrayList<String>> mappedDevices;
 
     @Nullable
     @Override
@@ -152,7 +157,58 @@ public class ExternalFragment extends Fragment {
             }
         }
 
+        mappedDevices = ServiceHelper.getInstance().deviceInfoData();
+
+        checkIfExternalIsConnected();
+
         return view;
+    }
+
+    private void checkIfExternalIsConnected(){
+        boolean isExternalConnected = false;
+        for (Integer key : mappedDevices.keySet()) {
+            try {
+
+                String deviceId = "";
+                String uuid = "";
+                String sw = "";
+                String hw = "";
+                StringBuilder capabilities = new StringBuilder();
+
+                if (mappedDevices.get(key) == null){
+                    return;
+                }
+
+                int counter = 1;
+
+                for (String data : Objects.requireNonNull(mappedDevices.get(key))) {
+
+                    if (counter == 2){
+                        deviceId = data.split(" ")[1];
+                        if (deviceId.equals("3") || deviceId.equals("4") || deviceId.equals("5")){
+                            isExternalConnected = true;
+                        }
+                    }
+
+                    counter++;
+                }
+
+            } catch (NullPointerException exception){
+                Log.e(TAG, "displayUI: NullPointerException -> " + exception.getLocalizedMessage());
+            }
+        }
+        
+        if (!isExternalConnected)
+            disableExternalFeatures();
+    }
+
+    private void disableExternalFeatures() {
+        btnUploadBackground.setEnabled(false);
+        btnDisplayExternal.setEnabled(false);
+        btnGetBMPIndexes.setEnabled(false);
+        btnUploadSound.setEnabled(false);
+        btnUploadOverlay.setEnabled(false);
+        btnGetWAVIndexes.setEnabled(false);
     }
 
     View.OnClickListener getBMPIndexes = v -> {

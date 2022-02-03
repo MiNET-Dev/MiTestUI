@@ -266,6 +266,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         apiStore = new APIStore();
         homeFragment.setLoggingIn(true);
         try {
+//            apiStore.Login(username, pin, loginResponse);
 //            apiStore.Login("Nikitha", "1234", loginResponse);
             apiStore.Login("lukegeyser", "1964", loginResponse);
         } catch (Exception ex){

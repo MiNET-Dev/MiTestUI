@@ -30,6 +30,7 @@
                     android:title="External Reader" />
 
                 <item
+                    android:enabled="false"
                     android:id="@+id/nav_gps"
                     android:icon="@drawable/ic_gps"
                     android:title="GPS" />
@@ -40,6 +41,7 @@
                     android:title="Lights" />
 
                 <item
+                    android:enabled="false"
                     android:id="@+id/nav_camera"
                     android:icon="@drawable/ic_camera"
                     android:title="Camera" />
@@ -59,21 +61,25 @@
                     android:title="Hardware Information" />
 
                 <item
+                    android:enabled="false"
                     android:id="@+id/nav_about"
                     android:icon="@drawable/ic_info"
                     android:title="About" />
 
                 <item
+                    android:enabled="false"
                     android:id="@+id/nav_tampers"
                     android:icon="@drawable/ic_tamper"
                     android:title="Tampers" />
 
                 <item
+                    android:enabled="false"
                     android:id="@+id/nav_telemetry"
                     android:icon="@drawable/ic_telemetry"
                     android:title="Telemetry" />
 
                 <item
+                    android:enabled="false"
                     android:id="@+id/nav_service_info"
                     android:icon="@drawable/ic_service_info"
                     android:title="Service Info" />
@@ -87,6 +93,7 @@
             <group android:checkableBehavior="single">
 
                 <item
+                    android:enabled="false"
                     android:id="@+id/nav_updates"
                     android:icon="@drawable/ic_updates"
                     android:title="Software Updates" />
@@ -97,6 +104,7 @@
                     android:title="QC Checklist" />
 
                 <item
+                    android:enabled="false"
                     android:id="@+id/nav_feedback"
                     android:icon="@drawable/ic_feedback"
                     android:title="Provide Feedback" />

@@ -65,6 +65,8 @@ public class ServiceHelper implements ServiceConnection {
             i.setClassName("za.co.megaware.MinetService", "za.co.megaware.MinetService.MainService");
             boolean ret = context.bindService(i, INSTANCE, Context.BIND_IMPORTANT);
             Log.d(TAG, "initService() bound with " + ret);
+
+            getAllDeviceInfo();
         } catch (Exception ex){
             Toast.makeText(context.getApplicationContext(), "Error on Service connection", Toast.LENGTH_LONG).show();
         }
@@ -75,8 +77,6 @@ public class ServiceHelper implements ServiceConnection {
         service = IMainService.Stub.asInterface((IBinder) boundService);
 
         isConnected = true;
-
-//        startBootStrapTimer(false);
 
         Log.d(TAG, "onServiceConnected() connected");
         Toast.makeText(context.getApplicationContext(), "Service Connected", Toast.LENGTH_LONG).show();
