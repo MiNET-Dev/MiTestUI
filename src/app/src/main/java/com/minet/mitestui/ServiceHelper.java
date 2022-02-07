@@ -68,7 +68,7 @@ public class ServiceHelper implements ServiceConnection {
 
             getAllDeviceInfo();
         } catch (Exception ex){
-            Toast.makeText(context.getApplicationContext(), "Error on Service connection", Toast.LENGTH_LONG).show();
+//            Toast.makeText(context.getApplicationContext(), "Error on Service connection", Toast.LENGTH_LONG).show();
         }
     }
 
@@ -79,11 +79,11 @@ public class ServiceHelper implements ServiceConnection {
         isConnected = true;
 
         Log.d(TAG, "onServiceConnected() connected");
-        Toast.makeText(context.getApplicationContext(), "Service Connected", Toast.LENGTH_LONG).show();
+//        Toast.makeText(context.getApplicationContext(), "Service Connected", Toast.LENGTH_LONG).show();
         try {
             ProcessDeviceInfo(service.GetAllDeviceInfo());
         } catch (RemoteException exception) {
-            Toast.makeText(context.getApplicationContext(), "Could not get device info", Toast.LENGTH_LONG).show();
+//            Toast.makeText(context.getApplicationContext(), "Could not get device info", Toast.LENGTH_LONG).show();
         }
     }
 
@@ -281,6 +281,10 @@ public class ServiceHelper implements ServiceConnection {
         } catch (RemoteException exception) {
             Toast.makeText(context.getApplicationContext(), "Could not get device info", Toast.LENGTH_LONG).show();
         }
+    }
+
+    public void updateFirmware() throws RemoteException {
+        service.UpgradeFirmware("/storage/emulated/0/Download/firmware.bin");
     }
 
 }

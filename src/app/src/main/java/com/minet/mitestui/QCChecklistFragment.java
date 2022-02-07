@@ -5,12 +5,10 @@ import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.RemoteException;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageButton;
@@ -25,7 +23,6 @@ import androidx.fragment.app.Fragment;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -150,7 +147,7 @@ public class QCChecklistFragment extends Fragment implements FTPAsyncResponse {
             btnRefresh.setClickable(true);
         }
 
-        FTPHandler ftpHandler = new FTPHandler();
+        FTPAsyncHandler ftpHandler = new FTPAsyncHandler();
 
         ftpHandler.delegate = this;
 

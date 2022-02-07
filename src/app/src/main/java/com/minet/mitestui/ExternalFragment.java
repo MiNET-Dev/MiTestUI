@@ -197,7 +197,7 @@ public class ExternalFragment extends Fragment {
                 Log.e(TAG, "displayUI: NullPointerException -> " + exception.getLocalizedMessage());
             }
         }
-        
+
         if (!isExternalConnected)
             disableExternalFeatures();
     }

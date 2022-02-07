@@ -13,4 +13,9 @@
     <string name="qc_setup">Setup &amp; Cross-Check:</string>
     <string name="qc_kiosk">Kiosk Mode:</string>
 
+    <!--  UPDATES FRAGMENT STRINGS  -->
+    <string name="update_service">Update Service:</string>
+    <string name="update_ui">Update UI Test Apps:</string>
+    <string name="update_firmware">Update Device Firmware:</string>
+
 </resources>

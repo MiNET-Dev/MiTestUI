@@ -95,7 +95,7 @@
                 <item
                     android:enabled="false"
                     android:id="@+id/nav_updates"
-                    android:icon="@drawable/ic_updates"
+                    android:icon="@drawable/ic_download"
                     android:title="Software Updates" />
 
                 <item

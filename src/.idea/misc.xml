@@ -33,6 +33,7 @@
         <entry key="app/src/main/res/layout/fragment_updates.xml" value="0.2953125" />
         <entry key="app/src/main/res/layout/nfc_device_info_fragment.xml" value="0.28888888888888886" />
         <entry key="app/src/main/res/menu/navigation_menu.xml" value="0.335" />
+        <entry key="app/src/main/res/xml/provider_paths.xml" value="0.17708333333333334" />
       </map>
     </option>
   </component>

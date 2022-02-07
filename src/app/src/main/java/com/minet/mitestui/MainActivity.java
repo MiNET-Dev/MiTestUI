@@ -50,7 +50,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import za.co.megaware.MinetService.IMainService;
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, LoginDialogFragment.LoginDialogListener {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, LoginDialogFragment.LoginDialogListener, UpdateService.UpdaterStatus {
 
     // UI ELEMENTS
     public DrawerLayout drawerLayout;
@@ -59,6 +59,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     // BROADCAST RECEIVERS
     ExternalFragment.ExternalReaderReceiver externalReaderReceiver;
     NFCFragment.NFCReceiver nfcReceiver;
+    UpdatesFragment.UpdatesReceiver updatesReceiver;
 
     // TAGS
     private static final String MAIN_TAG = "MainActivity";
@@ -70,6 +71,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     // FRAGMENTS
     HomeFragment homeFragment;
+    UpdatesFragment updatesFragment;
     NavigationView navigationView;
     Menu navigationMenu;
 
@@ -121,7 +123,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         ServiceHelper.getInstance().initService(getApplicationContext());
 
-        setLoggedIn(false);
+        setLoggedIn(true);
     }
 
     // override the onOptionsItemSelected()
@@ -217,7 +219,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 setTitle("Service Info");
                 break;
             case R.id.nav_updates:
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new UpdatesFragment()).commit();
+                // SETTING UP BROADCAST RECEIVERS
+                updatesFragment = new UpdatesFragment();
+                updatesReceiver = updatesFragment.new UpdatesReceiver();
+                IntentFilter updatesFilter = new IntentFilter();
+                updatesFilter.addAction("UPLOADING_FIRMWARE");
+
+                this.registerReceiver(updatesReceiver, updatesFilter, null, null);
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, updatesFragment).commit();
                 setTitle("Updates");
                 break;
             case R.id.nav_qc_check:
@@ -335,5 +344,40 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public void onLoginDialogNegativeClick(DialogFragment dialog) {
         dialog.getDialog().cancel();
+    }
+
+    @Override
+    public void onCreateLocalFile() {
+        updatesFragment.onCreateLocalFile();
+    }
+
+    @Override
+    public void onDownloadFile() {
+        updatesFragment.onDownloadFile();
+    }
+
+    @Override
+    public void onDownloadComplete() {
+        updatesFragment.onDownloadComplete();
+    }
+
+    @Override
+    public void onDownloadFailed() {
+        updatesFragment.onDownloadFailed();
+    }
+
+    @Override
+    public void onInstall() {
+        updatesFragment.onInstall();
+    }
+
+    @Override
+    public void onInstallComplete() {
+        updatesFragment.onInstallComplete();
+    }
+
+    @Override
+    public void onInstallFailed() {
+        updatesFragment.onInstallFailed();
     }
 }
