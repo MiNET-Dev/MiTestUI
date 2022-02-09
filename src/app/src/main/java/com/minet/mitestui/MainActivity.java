@@ -60,6 +60,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     ExternalFragment.ExternalReaderReceiver externalReaderReceiver;
     NFCFragment.NFCReceiver nfcReceiver;
     UpdatesFragment.UpdatesReceiver updatesReceiver;
+    GPSFragment.GPSBroadcastReceiver gpsBroadcastReceiver;
 
     // TAGS
     private static final String MAIN_TAG = "MainActivity";
@@ -187,7 +188,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 setTitle("External Reader");
                 break;
             case R.id.nav_gps:
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new GPSFragment()).commit();
+                GPSFragment gpsFragment = new GPSFragment();
+                gpsBroadcastReceiver = gpsFragment.new GPSBroadcastReceiver();
+
+                IntentFilter gpsFilter = new IntentFilter();
+                gpsFilter.addAction("GPS_UPDATE");
+
+                this.registerReceiver(gpsBroadcastReceiver, gpsFilter, null, null);
+
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, gpsFragment).commit();
                 setTitle("GPS");
                 break;
             case R.id.nav_lights:

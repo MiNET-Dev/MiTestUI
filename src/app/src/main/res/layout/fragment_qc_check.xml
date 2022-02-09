@@ -160,8 +160,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentEnd="true"
-                        android:layout_centerHorizontal="true"
-                        android:layout_centerVertical="true"
+                        android:layout_centerInParent="true"
                         android:clickable="true"
                         android:focusable="true" />
                 </RelativeLayout>
@@ -219,8 +218,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_centerHorizontal="true"
-                        android:layout_centerVertical="true"
+                        android:layout_centerInParent="true"
                         android:layout_toEndOf="@+id/img_pe_screen_protector"
                         android:width="250sp"
                         android:text="Screen protector fitted"
@@ -255,8 +253,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_centerHorizontal="true"
-                        android:layout_centerVertical="true"
+                        android:layout_centerInParent="true"
                         android:layout_toEndOf="@+id/img_pe_touch_screen"
                         android:width="250sp"
                         android:text="Touch screen working"
@@ -291,8 +288,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_centerHorizontal="true"
-                        android:layout_centerVertical="true"
+                        android:layout_centerInParent="true"
                         android:layout_toEndOf="@+id/img_pe_external_screen"
                         android:width="250sp"
                         android:text="External screen working"
@@ -327,8 +323,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_centerHorizontal="true"
-                        android:layout_centerVertical="true"
+                        android:layout_centerInParent="true"
                         android:layout_toEndOf="@+id/img_pe_serial_match"
                         android:width="250sp"
                         android:text="Device serial number on main is present and matches UI Serial"
@@ -363,8 +358,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_centerHorizontal="true"
-                        android:layout_centerVertical="true"
+                        android:layout_centerInParent="true"
                         android:layout_toEndOf="@+id/img_pe_screws_spec"
                         android:width="250sp"
                         android:text="All screws tight (to spec)"
@@ -399,8 +393,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_centerHorizontal="true"
-                        android:layout_centerVertical="true"
+                        android:layout_centerInParent="true"
                         android:layout_toEndOf="@+id/img_pe_qr_code"
                         android:width="250sp"
                         android:text="Check if device has a QR code on device"
@@ -453,8 +446,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_centerHorizontal="true"
-                        android:layout_centerVertical="true"
+                        android:layout_centerInParent="true"
                         android:layout_toEndOf="@+id/img_de_display_timeout"
                         android:width="250sp"
                         android:text="Display timeout 30min"

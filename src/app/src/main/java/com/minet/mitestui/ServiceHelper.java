@@ -287,4 +287,10 @@ public class ServiceHelper implements ServiceConnection {
         service.UpgradeFirmware("/storage/emulated/0/Download/firmware.bin");
     }
 
+    public boolean isGPSWorking() throws RemoteException {
+        int result = service.GPSTroubleShootStatus();
+
+        return result == 0;
+    }
+
 }

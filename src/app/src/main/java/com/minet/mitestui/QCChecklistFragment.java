@@ -267,6 +267,8 @@ public class QCChecklistFragment extends Fragment implements FTPAsyncResponse {
         try {
             Log.d(TAG, "ID -> " + compoundButton.getId());
 
+            Log.d(TAG, "ID -> " + getResources().getResourceName(compoundButton.getId()));
+
             if (compoundButton.getId() == R.id.chk_init_dev_number) {
                 isInitChecked = isChecked;
                 disableEnableControls(isChecked, qcLayout);
