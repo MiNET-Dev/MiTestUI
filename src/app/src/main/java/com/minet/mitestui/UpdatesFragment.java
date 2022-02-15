@@ -162,7 +162,7 @@ public class UpdatesFragment extends Fragment implements FTPAsyncResponse {
         FTPHandler handler = new FTPHandler();
 
         String latestService = handler.getAppVersion(AppVersionType.SERVICE);
-        String localService = getLocalAppVersion("za.co.megaware.MinetService") == null ? "not installed" : getLocalAppVersion("za.co.megaware.MinetService");
+        String localService = Utils.getLocalAppVersion("za.co.megaware.MinetService", getContext()) == null ? "not installed" : Utils.getLocalAppVersion("za.co.megaware.MinetService", getContext());
 
         Objects.requireNonNull(getActivity()).runOnUiThread(() -> {
             serviceVersion.setText(localService);
@@ -190,7 +190,7 @@ public class UpdatesFragment extends Fragment implements FTPAsyncResponse {
         });
 
         String latestOldUI = handler.getAppVersion(AppVersionType.OLD_UI);
-        String localOldUI = getLocalAppVersion("com.silver.userinterfacealpha")== null ? "not installed" : getLocalAppVersion("com.silver.userinterfacealpha");
+        String localOldUI = Utils.getLocalAppVersion("com.silver.userinterfacealpha", getContext())== null ? "not installed" : Utils.getLocalAppVersion("com.silver.userinterfacealpha", getContext());
 
         Objects.requireNonNull(getActivity()).runOnUiThread(() -> {
             OldUIVersion.setText(localOldUI);
@@ -204,7 +204,7 @@ public class UpdatesFragment extends Fragment implements FTPAsyncResponse {
         });
 
         String latestNewUI = handler.getAppVersion(AppVersionType.NEW_UI);
-        String localNewUI = getLocalAppVersion("com.minet.mitestui") == null ? "not installed" : getLocalAppVersion("com.minet.mitestui");
+        String localNewUI = Utils.getLocalAppVersion("com.minet.mitestui", getContext()) == null ? "not installed" : Utils.getLocalAppVersion("com.minet.mitestui", getContext());
 
         Objects.requireNonNull(getActivity()).runOnUiThread(() -> {
             NewUIVersion.setText(localNewUI);
@@ -220,7 +220,7 @@ public class UpdatesFragment extends Fragment implements FTPAsyncResponse {
         });
 
         String latestBpass = handler.getAppVersion(AppVersionType.OPEN_TRANSIT);
-        String localBpass = getLocalAppVersion("com.bps.bpass.mainpackage") == null ? "not installed" : getLocalAppVersion("com.bps.bpass.mainpackage");
+        String localBpass = Utils.getLocalAppVersion("com.bps.bpass.mainpackage", getContext()) == null ? "not installed" : Utils.getLocalAppVersion("com.bps.bpass.mainpackage", getContext());
 
         Objects.requireNonNull(getActivity()).runOnUiThread(() -> {
             bpassVersion.setText(localBpass);
@@ -237,16 +237,6 @@ public class UpdatesFragment extends Fragment implements FTPAsyncResponse {
             updatesMainContent.setVisibility(View.VISIBLE);
             updatesLoading.setVisibility(View.GONE);
         });
-    }
-
-    public String getLocalAppVersion(String appName){
-        PackageInfo packageInfo = null;
-        try {
-            packageInfo = Objects.requireNonNull(getContext()).getPackageManager().getPackageInfo(appName, 0);
-        } catch (PackageManager.NameNotFoundException e) {
-            return null;
-        }
-        return Objects.requireNonNull(packageInfo).versionName;
     }
 
     public String getFirmwareVersion(){

@@ -1,5 +1,8 @@
 package com.minet.mitestui;
 
+import android.content.Context;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.os.Environment;
 import android.util.Log;
 import android.widget.Button;
@@ -23,6 +26,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Locale;
+import java.util.Objects;
 
 public class Utils {
 
@@ -188,6 +192,16 @@ public class Utils {
             Log.e(TAG, "CheckDirectory: " + exec.getLocalizedMessage());
             return false;
         }
+    }
+
+    public static String getLocalAppVersion(String appName, Context context){
+        PackageInfo packageInfo = null;
+        try {
+            packageInfo = Objects.requireNonNull(context).getPackageManager().getPackageInfo(appName, 0);
+        } catch (PackageManager.NameNotFoundException e) {
+            return null;
+        }
+        return Objects.requireNonNull(packageInfo).versionName;
     }
 
     public static int GetDeviceNumber(){

@@ -10,6 +10,8 @@ import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
+import androidx.fragment.app.DialogFragment;
+
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
@@ -19,6 +21,12 @@ import za.co.megaware.MinetService.IMainService;
 public class ServiceHelper implements ServiceConnection {
 
     private static final String TAG = "ServiceHelper";
+
+    public interface ServiceListener {
+        void onServiceHelperConnected();
+    }
+
+    ServiceListener listener;
 
     private IMainService service;
 
@@ -59,13 +67,22 @@ public class ServiceHelper implements ServiceConnection {
     }
 
     public void initService(Context context){
+
+        // Verify that the host activity implements the callback interface
+        try {
+            // Instantiate the NoticeDialogListener so we can send events to the host
+            listener = (ServiceListener) context;
+        } catch (ClassCastException e) {
+            // The activity doesn't implement the interface, throw exception
+            Log.e(TAG, "initService: " + e.getLocalizedMessage());
+        }
+
         try{
             this.context = context;
             Intent i = new Intent();
             i.setClassName("za.co.megaware.MinetService", "za.co.megaware.MinetService.MainService");
             boolean ret = context.bindService(i, INSTANCE, Context.BIND_IMPORTANT);
             Log.d(TAG, "initService() bound with " + ret);
-
             getAllDeviceInfo();
         } catch (Exception ex){
 //            Toast.makeText(context.getApplicationContext(), "Error on Service connection", Toast.LENGTH_LONG).show();
@@ -79,6 +96,7 @@ public class ServiceHelper implements ServiceConnection {
         isConnected = true;
 
         Log.d(TAG, "onServiceConnected() connected");
+        listener.onServiceHelperConnected();
 //        Toast.makeText(context.getApplicationContext(), "Service Connected", Toast.LENGTH_LONG).show();
         try {
             ProcessDeviceInfo(service.GetAllDeviceInfo());
@@ -97,6 +115,10 @@ public class ServiceHelper implements ServiceConnection {
 
     public LinkedHashMap<Integer, ArrayList<String>> deviceInfoData(){
         return map_device_info_display;
+    }
+
+    public boolean isConnected(){
+        return isConnected;
     }
 
     private void ProcessDeviceInfo(byte[] buff) {
@@ -251,18 +273,6 @@ public class ServiceHelper implements ServiceConnection {
         service.PrintFunction(_data, feedlines, cutpartial, "MiDEVICE_PRINT-" + printID);
     }
 
-    public String getDeviceIMEI() throws RemoteException {
-        return service.GetDeviceIMEI();
-    }
-
-    public String getDeviceMacAddress() throws RemoteException {
-        return service.GetDeviceMACAddress();
-    }
-
-    public String getDeviceIP() throws RemoteException {
-        return service.GetDeviceIPAddress();
-    }
-
     public int getPrinterStates() throws RemoteException {
         return service.GetPrinterStates();
     }
@@ -285,6 +295,18 @@ public class ServiceHelper implements ServiceConnection {
 
     public void updateFirmware() throws RemoteException {
         service.UpgradeFirmware("/storage/emulated/0/Download/firmware.bin");
+    }
+
+    public String getIMEI() throws RemoteException {
+        return service.GetDeviceIMEI();
+    }
+
+    public String getIPAddress() throws RemoteException {
+        return service.GetDeviceIPAddress();
+    }
+
+    public String getMacAddress() throws RemoteException {
+        return service.GetDeviceMACAddress();
     }
 
     public boolean isGPSWorking() throws RemoteException {

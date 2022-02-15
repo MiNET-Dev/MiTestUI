@@ -1,12 +1,19 @@
 package com.minet.mitestui;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.os.RemoteException;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ProgressBar;
+import android.widget.RadioButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -31,99 +38,209 @@ public class HomeFragment extends Fragment {
     private static final String TAG = "HomeFragment";
 
     private View homeFragment;
-    private Button btnLogin;
-    private LoginDialogFragment loginDialogFragment;
-    private ProgressBar loadinLogin;
 
-    private RelativeLayout loginScreen;
-    private RelativeLayout technicianDetails;
-    private RelativeLayout noConnection;
+    ColorStateList colorStateList = new ColorStateList(
+            new int[][]{
+                    new int[]{-android.R.attr.state_checked}, //disabled
+                    new int[]{android.R.attr.state_checked} //enabled
+            },
 
-    TextView txtImage;
-    TextView txtTechName;
-    TextView txtCell;
-    TextView txtEmail;
+            new int[]{
+                    Color.RED,//disabled
+                    Color.GREEN //enabled
+            }
+    );
 
-    private TechnicianModel model;
+    // PRINTER TAMPERS
+    private RadioButton rbPrinterTray;
+    private RadioButton rbPrinterPaper;
+    private TextView txtPrinterTray;
+    private TextView txtPrinterPaper;
+
+    // SENSOR TAMPERS
+    private RadioButton rbTamperInternal;
+    private RadioButton rbTamperBracket;
+    private RadioButton rbTamperPole;
+    private TextView txtTamperInternal;
+    private TextView txtTamperBracket;
+    private TextView txtTamperPole;
+
+    // DEVICE INFO
+    private TextView txtIMEI;
+    private TextView txtMACAddress;
+    private TextView txtIPAddress;
+
+    // APP VERSIONS
+    private TextView txtServiceVersion;
+    private TextView txtUIVersion;
+
+    // TELEMETRY
+    private TextView txtBattery;
+    private TextView txtTemperature;
+    private TextView txtInput;
+    private TextView txtVersion;
+    private TextView txtBatteryStatus;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         homeFragment = inflater.inflate(R.layout.fragment_home, container, false);
 
-        btnLogin = homeFragment.findViewById(R.id.btn_login);
-        loadinLogin = homeFragment.findViewById(R.id.loading_login);
+        rbPrinterPaper = homeFragment.findViewById(R.id.home_ic_printer_paper);
+        rbPrinterPaper.setClickable(false);
+        rbPrinterPaper.setButtonTintList(colorStateList);
+        rbPrinterTray = homeFragment.findViewById(R.id.home_ic_printer_tray);
+        rbPrinterTray.setClickable(false);
+        rbPrinterTray.setButtonTintList(colorStateList);
+        rbTamperBracket = homeFragment.findViewById(R.id.home_ic_bracket_tamper);
+        rbTamperBracket.setClickable(false);
+        rbTamperBracket.setButtonTintList(colorStateList);
+        rbTamperInternal = homeFragment.findViewById(R.id.home_ic_internal_tamper);
+        rbTamperInternal.setClickable(false);
+        rbTamperInternal.setButtonTintList(colorStateList);
+        rbTamperPole = homeFragment.findViewById(R.id.home_ic_pole_tamper);
+        rbTamperPole.setClickable(false);
+        rbTamperPole.setButtonTintList(colorStateList);
 
-        loginScreen = homeFragment.findViewById(R.id.rl_login_section);
-        technicianDetails = homeFragment.findViewById(R.id.rl_technician_details);
-        noConnection = homeFragment.findViewById(R.id.rl_no_connection);
+        txtBatteryStatus = homeFragment.findViewById(R.id.txt_home_battery_status);
+        txtTemperature = homeFragment.findViewById(R.id.txt_home_temp);
+        txtBattery = homeFragment.findViewById(R.id.txt_home_battery);
+        txtInput = homeFragment.findViewById(R.id.txt_home_input);
+        txtVersion = homeFragment.findViewById(R.id.txt_home_version);
+        txtUIVersion = homeFragment.findViewById(R.id.txt_home_ui_info);
+        txtIPAddress = homeFragment.findViewById(R.id.txt_home_ip);
+        txtMACAddress = homeFragment.findViewById(R.id.txt_home_mac);
+        txtIMEI = homeFragment.findViewById(R.id.txt_home_imei);
+        txtTamperPole = homeFragment.findViewById(R.id.txt_home_pole_tamper);
+        txtTamperBracket = homeFragment.findViewById(R.id.txt_home_bracket_tamper);
+        txtTamperInternal = homeFragment.findViewById(R.id.txt_home_internal_tamper);
+        txtPrinterPaper = homeFragment.findViewById(R.id.txt_home_printer_paper);
+        txtPrinterTray = homeFragment.findViewById(R.id.txt_home_printer_tray);
+        txtServiceVersion = homeFragment.findViewById(R.id.txt_home_service_info);
 
-        txtImage = homeFragment.findViewById(R.id.txt_circle_name);
-        txtTechName = homeFragment.findViewById(R.id.txt_logged_username);
-        txtCell = homeFragment.findViewById(R.id.txt_cell_value);
-        txtEmail = homeFragment.findViewById(R.id.txt_email_value);
+        String localNewUI = Utils.getLocalAppVersion("com.minet.mitestui", getContext()) == null ? "not installed" : Utils.getLocalAppVersion("com.minet.mitestui", getContext());
+        String localService = Utils.getLocalAppVersion("za.co.megaware.MinetService", getContext()) == null ? "not installed" : Utils.getLocalAppVersion("za.co.megaware.MinetService", getContext());
 
-        btnLogin.setOnClickListener(loginClicked);
+        txtUIVersion.setText(String.format("v%s", localNewUI));
+        txtServiceVersion.setText(String.format("v%s", localService));
 
-        if (Utils.hasActiveInternetConnection() == ConnectivityState.CONNECTED){
-            noConnection.setVisibility(View.GONE);
-
-            if (model == null) loginScreen.setVisibility(View.VISIBLE);
-            else {
-                displayTechnicianDetails();
-                technicianDetails.setVisibility(View.VISIBLE);
-            }
-
-        } else {
-
-            if (model == null) noConnection.setVisibility(View.VISIBLE);
-            else {
-                displayTechnicianDetails();
-                technicianDetails.setVisibility(View.VISIBLE);
-            }
-
-            loginScreen.setVisibility(View.GONE);
+        if (ServiceHelper.getInstance().isConnected()){
+            syncWithService();
         }
 
         return homeFragment;
     }
 
-    View.OnClickListener loginClicked = v -> {
-        loginDialogFragment = new LoginDialogFragment();
-        loginDialogFragment.show(getChildFragmentManager(), LoginDialogFragment.TAG);
-    };
+    private void ProcessTamperInfo(boolean[] tamperinfo){
 
-    public void setLoggingIn(boolean isLoggingIn) {
-        // Setup Loading animations for logging in
-        if (isLoggingIn)
-            loadinLogin.setVisibility(View.VISIBLE);
-        else
-            loadinLogin.setVisibility(View.INVISIBLE);
-    }
-
-    public void setTechnician(TechnicianModel technician) {
-        if (technician == null){
-            loginScreen.setVisibility(View.VISIBLE);
-            technicianDetails.setVisibility(View.GONE);
+        if (tamperinfo[0]){
+            rbTamperInternal.setChecked(true);
+            txtTamperInternal.setText("on");
         } else {
-            this.model = technician;
+            rbTamperInternal.setChecked(false);
+            txtTamperInternal.setText("off");
+        }
 
-            displayTechnicianDetails();
+        if (tamperinfo[1]){
+            rbTamperBracket.setChecked(true);
+            txtTamperBracket.setText("on");
+        } else {
+            rbTamperBracket.setChecked(false);
+            txtTamperBracket.setText("off");
+        }
+
+        if (tamperinfo[2]){
+            rbTamperPole.setChecked(true);
+            txtTamperPole.setText("on");
+        } else{
+            rbTamperPole.setChecked(false);
+            txtTamperPole.setText("off");
         }
     }
 
-    public void displayTechnicianDetails(){
-        txtTechName.setText(model.getName() + " " + model.getSurname());
+    private void ProcessPowerEvent(int chargeStatus,int batteryLevel,float inputVoltage,float temp){
+        txtTemperature.setText(temp + " °C");
+        txtBattery.setText(batteryLevel + " %");
+        txtInput.setText(String.format("%.02f", inputVoltage) + "V");
+
+        if(chargeStatus == 2)
+            txtBatteryStatus.setText("Battery Full");
+        else if (chargeStatus == 1)
+            txtBatteryStatus.setText("Charging");
+        else if (chargeStatus == 0)
+            txtBatteryStatus.setText("Charge suspend");
+
+        if(inputVoltage < 2)
+            txtBatteryStatus.setText("No Power");
+
+    }
+
+    private void ProcessPrinterEvents(int status){
+        if(status == 10000)
+        {
+            rbPrinterTray.setEnabled(false);
+            rbPrinterPaper.setEnabled(false);
+            rbPrinterTray.setChecked(false);
+            rbPrinterPaper.setChecked(false);
+            txtPrinterPaper.setText("PRINTER NOT FOUND");
+            txtPrinterTray.setText("PRINTER NOT FOUND");
+
+        }else{
+            rbPrinterTray.setEnabled(true);
+            rbPrinterPaper.setEnabled(true);
+        }
+
+        if((status & 0x02) == 0x02){
+            rbPrinterPaper.setChecked(true);
+            txtPrinterPaper.setText("Has paper");
+        }else{
+            rbPrinterPaper.setChecked(false);
+            txtPrinterPaper.setText("Paper finished");
+        }
+
+        if((status & 0x01) == 0x01){
+            rbPrinterTray.setChecked(true);
+            txtPrinterTray.setText("Tray closed");
+        }else{
+            rbPrinterTray.setChecked(false);
+            txtPrinterTray.setText("Tray open");
+        }
+    }
+
+    public void syncWithService(){
         try {
-            String chars = String.valueOf(model.getName().charAt(0)) + model.getSurname().charAt(0);
-            txtImage.setText(chars);
-        } catch (Exception e){
+            ProcessPrinterEvents(ServiceHelper.getInstance().getPrinterStates());
+            ProcessTamperInfo(ServiceHelper.getInstance().getTamperStates());
+            txtIMEI.setText(ServiceHelper.getInstance().getIMEI());
+            txtMACAddress.setText(ServiceHelper.getInstance().getMacAddress());
+            txtIPAddress.setText(ServiceHelper.getInstance().getIPAddress());
+        } catch (RemoteException e) {
             e.printStackTrace();
         }
-        txtCell.setText(model.getCell());
-        txtEmail.setText(model.getEmail());
-
-        loginScreen.setVisibility(View.GONE);
-        technicianDetails.setVisibility(View.VISIBLE);
     }
+
+    public class HomeReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+            switch(intent.getAction()){
+                case "TAMPER":
+                    ProcessTamperInfo(intent.getBooleanArrayExtra("tampers"));
+                    break;
+                case "PRINTER_STATUS":
+                    ProcessPrinterEvents(intent.getIntExtra("printer_status",0));
+                    break;
+                case "POWER":
+                    ProcessPowerEvent(intent.getIntExtra("chargestatus",0),
+                            intent.getIntExtra("batterylevel",0),
+                            intent.getFloatExtra("inputlevel",0),
+                            intent.getFloatExtra("temp",0));
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+
 }

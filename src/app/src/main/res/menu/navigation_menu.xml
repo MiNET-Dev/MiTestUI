@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:ignore="HardcodedText"
     tools:showIn="navigation_view">
@@ -10,21 +11,31 @@
         android:icon="@drawable/ic_home"
         android:title="Home" />
 
+    <item
+        android:enabled="false"
+        android:id="@+id/nav_profile"
+        android:checkable="true"
+        android:icon="@drawable/ic_user"
+        android:title="Profile" />
+
     <item android:title="Hardware Testing">
         <menu>
             <group android:checkableBehavior="single">
 
                 <item
+                    android:enabled="false"
                     android:id="@+id/nav_printer"
                     android:icon="@drawable/ic_print"
                     android:title="Printer" />
 
                 <item
+                    android:enabled="false"
                     android:id="@+id/nav_nfc"
                     android:icon="@drawable/ic_nfc"
                     android:title="NFC" />
 
                 <item
+                    android:enabled="false"
                     android:id="@+id/nav_external"
                     android:icon="@drawable/ic_external"
                     android:title="External Reader" />
@@ -36,6 +47,7 @@
                     android:title="GPS" />
 
                 <item
+                    android:enabled="false"
                     android:id="@+id/nav_lights"
                     android:icon="@drawable/ic_lights"
                     android:title="Lights" />
@@ -56,6 +68,7 @@
             <group android:checkableBehavior="single">
 
                 <item
+                    android:enabled="false"
                     android:id="@+id/nav_hardware_info"
                     android:icon="@drawable/ic_hardware_info"
                     android:title="Hardware Information" />
@@ -99,6 +112,7 @@
                     android:title="Software Updates" />
 
                 <item
+                    android:enabled="false"
                     android:id="@+id/nav_qc_check"
                     android:icon="@drawable/ic_qc_checklist"
                     android:title="QC Checklist" />

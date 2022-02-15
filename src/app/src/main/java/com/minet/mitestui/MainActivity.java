@@ -50,7 +50,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import za.co.megaware.MinetService.IMainService;
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, LoginDialogFragment.LoginDialogListener, UpdateService.UpdaterStatus {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, LoginDialogFragment.LoginDialogListener, UpdateService.UpdaterStatus, ServiceHelper.ServiceListener {
 
     // UI ELEMENTS
     public DrawerLayout drawerLayout;
@@ -59,6 +59,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     // BROADCAST RECEIVERS
     ExternalFragment.ExternalReaderReceiver externalReaderReceiver;
     NFCFragment.NFCReceiver nfcReceiver;
+    HomeFragment.HomeReceiver homeReceiver;
     UpdatesFragment.UpdatesReceiver updatesReceiver;
     GPSFragment.GPSBroadcastReceiver gpsBroadcastReceiver;
 
@@ -76,6 +77,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     NavigationView navigationView;
     Menu navigationMenu;
 
+    Menu actionBarMenu;
+
     public static TechnicianModel loggedInUser = null;
 
     APIStore apiStore;
@@ -84,6 +87,47 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     protected void onDestroy() {
         super.onDestroy();
         unbindService(ServiceHelper.getInstance());
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.actionbar_menu, menu);
+
+        MenuItem menuItem = menu.findItem(R.id.menu_device_number);
+        menuItem.setTitle("Device: " + setDeviceNumber());
+
+        actionBarMenu = menu;
+
+        return true;
+    }
+
+    private String setDeviceNumber(){
+        File deviceNumberFile = new File(_DEVICE_NUMBER_PATH);
+
+        if (deviceNumberFile.exists()){
+            try {
+                BufferedReader reader = new BufferedReader(new FileReader(deviceNumberFile));
+
+                String currentLine;
+
+                while ((currentLine = reader.readLine()) != null){
+                    try {
+                        int deviceNumber = Integer.parseInt(currentLine);
+
+                        return String.valueOf(deviceNumber);
+                    } catch (NumberFormatException exception){
+                        Toast.makeText(this, "Not a valid Device Number", Toast.LENGTH_LONG).show();
+                        return "not set";
+                    }
+                }
+
+            } catch (IOException ex){
+                ex.printStackTrace();
+                return "not set";
+            }
+        } else return "not set";
+
+        return "not set";
     }
 
     @Override
@@ -114,6 +158,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         if (savedInstanceState == null) {
             homeFragment = new HomeFragment();
+            homeReceiver = homeFragment.new HomeReceiver();
+            IntentFilter homeFilter = new IntentFilter();
+            homeFilter.addAction("TAMPER");
+            homeFilter.addAction("POWER");
+            homeFilter.addAction("POWER");
+            homeFilter.addAction("PRINTER_STATUS");
+
+            this.registerReceiver(homeReceiver, homeFilter, null, null);
+
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, homeFragment).commit();
             navigationView.setCheckedItem(R.id.nav_home);
             setTitle("Home");
@@ -122,7 +175,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         // to make the Navigation drawer icon always appear on the action bar
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
-        ServiceHelper.getInstance().initService(getApplicationContext());
+        ServiceHelper.getInstance().initService(this);
 
         setLoggedIn(true);
     }
@@ -139,6 +192,21 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             return true;
         }
 
+        switch (item.getItemId()) {
+
+            case R.id.menu_login:
+                LoginDialogFragment loginDialogFragment = new LoginDialogFragment();
+                loginDialogFragment.show(getSupportFragmentManager(), LoginDialogFragment.TAG);
+                break;
+            case R.id.menu_logout:
+                actionBarMenu.findItem(R.id.menu_login).setVisible(true);
+                actionBarMenu.findItem(R.id.menu_logout).setVisible(false);
+//                LoginDialogFragment loginDialogFragment = new LoginDialogFragment();
+//                loginDialogFragment.show(getSupportFragmentManager(), LoginDialogFragment.TAG);
+                break;
+            default:
+                break;
+        }
         return super.onOptionsItemSelected(item);
     }
 
@@ -149,12 +217,28 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         switch (item.getItemId()) {
             case R.id.nav_home:
+                homeFragment = new HomeFragment();
+                homeReceiver = homeFragment.new HomeReceiver();
+                IntentFilter homeFilter = new IntentFilter();
+                homeFilter.addAction("TAMPER");
+                homeFilter.addAction("POWER");
+                homeFilter.addAction("POWER");
+                homeFilter.addAction("PRINTER_STATUS");
+
+                this.registerReceiver(homeReceiver, homeFilter, null, null);
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, homeFragment).commit();
 
-                homeFragment.setTechnician(loggedInUser);
+                setTitle("Home");
+                break;
+            case R.id.nav_profile:
+                ProfileFragment profileFragment = new ProfileFragment();
+
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, profileFragment).commit();
+
+                profileFragment.setTechnician(loggedInUser);
                 setLoggedIn(true);
 
-                setTitle("Home");
+                setTitle("Profile");
                 break;
             case R.id.nav_printer:
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new PrinterFragment()).commit();
@@ -282,7 +366,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public void onLoginDialogPositiveClick(DialogFragment dialog, String username, String pin) {
         apiStore = new APIStore();
-        homeFragment.setLoggingIn(true);
         try {
 //            apiStore.Login(username, pin, loginResponse);
 //            apiStore.Login("Nikitha", "1234", loginResponse);
@@ -300,13 +383,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                 if (response.isSuccessful()){
                     String  bodyString = new String(response.body().bytes());
-                    homeFragment.setLoggingIn(false);
 
                     Gson gson = new GsonBuilder().create();
                     try {
                         loggedInUser = gson.fromJson(bodyString, TechnicianModel.class);
-                        homeFragment.setTechnician(loggedInUser);
                         setLoggedIn(true);
+                        actionBarMenu.findItem(R.id.menu_login).setVisible(false);
+                        actionBarMenu.findItem(R.id.menu_logout).setVisible(true);
+                        navigationMenu.findItem(R.id.nav_profile).setEnabled(true);
                     } catch (Exception e) {
                         // handle failure to read error
                         Log.v("gson error","error when gson process");
@@ -328,26 +412,26 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         @Override
         public void onFailure(Call<ResponseBody> call, Throwable t) {
             Log.d("retrofit", "Send Data failure");
-            homeFragment.setLoggingIn(false);
             Toast.makeText(getApplicationContext(), "error logging in", Toast.LENGTH_LONG).show();
         }
     };
 
     private void setLoggedIn(boolean isLoggedIn) {
         navigationMenu.findItem(R.id.nav_printer).setEnabled(isLoggedIn);
+//        navigationMenu.findItem(R.id.nav_profile).setEnabled(isLoggedIn);
         navigationMenu.findItem(R.id.nav_nfc).setEnabled(isLoggedIn);
         navigationMenu.findItem(R.id.nav_external).setEnabled(isLoggedIn);
         navigationMenu.findItem(R.id.nav_gps).setEnabled(isLoggedIn);
         navigationMenu.findItem(R.id.nav_lights).setEnabled(isLoggedIn);
-        navigationMenu.findItem(R.id.nav_camera).setEnabled(isLoggedIn);
+//        navigationMenu.findItem(R.id.nav_camera).setEnabled(isLoggedIn);
         navigationMenu.findItem(R.id.nav_hardware_info).setEnabled(isLoggedIn);
-        navigationMenu.findItem(R.id.nav_about).setEnabled(isLoggedIn);
-        navigationMenu.findItem(R.id.nav_tampers).setEnabled(isLoggedIn);
-        navigationMenu.findItem(R.id.nav_telemetry).setEnabled(isLoggedIn);
-        navigationMenu.findItem(R.id.nav_service_info).setEnabled(isLoggedIn);
+//        navigationMenu.findItem(R.id.nav_about).setEnabled(isLoggedIn);
+//        navigationMenu.findItem(R.id.nav_tampers).setEnabled(isLoggedIn);
+//        navigationMenu.findItem(R.id.nav_telemetry).setEnabled(isLoggedIn);
+//        navigationMenu.findItem(R.id.nav_service_info).setEnabled(isLoggedIn);
         navigationMenu.findItem(R.id.nav_updates).setEnabled(isLoggedIn);
         navigationMenu.findItem(R.id.nav_qc_check).setEnabled(isLoggedIn);
-        navigationMenu.findItem(R.id.nav_feedback).setEnabled(isLoggedIn);
+//        navigationMenu.findItem(R.id.nav_feedback).setEnabled(isLoggedIn);
     }
 
     @Override
@@ -388,5 +472,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public void onInstallFailed() {
         updatesFragment.onInstallFailed();
+    }
+
+    @Override
+    public void onServiceHelperConnected() {
+        homeFragment.syncWithService();
     }
 }

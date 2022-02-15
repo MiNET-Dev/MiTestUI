@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/menu_device_number"
+        android:orderInCategory="100"
+        app:showAsAction="always"
+        android:title="" />
+    <item
+        android:id="@+id/menu_login"
+        android:orderInCategory="100"
+        android:icon="@drawable/ic_login"
+        app:showAsAction="always"
+        android:title="login" />
+    <item
+        android:id="@+id/menu_logout"
+        android:orderInCategory="100"
+        android:visible="false"
+        android:icon="@drawable/ic_logout"
+        app:showAsAction="always"
+        android:title="logout" />
+</menu>
