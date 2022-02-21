@@ -40,9 +40,11 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import java.io.BufferedReader;
+import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.Locale;
 import java.util.Objects;
 
@@ -238,10 +240,89 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 //                LoginDialogFragment loginDialogFragment = new LoginDialogFragment();
 //                loginDialogFragment.show(getSupportFragmentManager(), LoginDialogFragment.TAG);
                 break;
+            case R.id.menu_start_service:
+                startMiNETService();
+                break;
+            case R.id.menu_stop_service:
+                stopMiNETService();
+                break;
+            case R.id.menu_grant_service_perms:
+
+                break;
             default:
                 break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void startMiNETService() {
+        try {
+            // START SERVICE
+            boolean result = false;
+            java.lang.Process process = null;
+            OutputStream out = null;
+            process = Runtime.getRuntime().exec("su");
+            out = process.getOutputStream();
+            DataOutputStream dataOutputStream = new DataOutputStream(out);
+            dataOutputStream
+                    .writeBytes("am startservice za.co.megaware.MinetService/.MainService");
+            // ??????
+            dataOutputStream.flush();
+            // ???????
+            dataOutputStream.close();
+            out.close();
+            int value = process.waitFor();
+
+            // ?????
+            if (value == 0) {
+                result = true;
+                Toast.makeText(getApplicationContext(), "Started Service", Toast.LENGTH_LONG).show();
+            } else if (value == 1) { // ??
+                result = false;
+                Toast.makeText(getApplicationContext(), "Could not Start Service", Toast.LENGTH_LONG).show();
+            } else { // ????
+                result = false;
+                Toast.makeText(getApplicationContext(), "Could not Start Service", Toast.LENGTH_LONG).show();
+            }
+        } catch (IOException | InterruptedException e) {
+            Toast.makeText(getApplicationContext(), "Error Starting Service", Toast.LENGTH_LONG).show();
+            Log.e(MAIN_TAG, "STARTING_SERVICE: ERROR STARTING SERVICE -> " + e.getLocalizedMessage());
+        }
+    }
+
+    private void stopMiNETService() {
+        try {
+            // START SERVICE
+            boolean result = false;
+            java.lang.Process process = null;
+            OutputStream out = null;
+            process = Runtime.getRuntime().exec("su");
+            out = process.getOutputStream();
+            DataOutputStream dataOutputStream = new DataOutputStream(out);
+            dataOutputStream
+                    .writeBytes("am stopservice za.co.megaware.MinetService/.MainService");
+            // ??????
+            dataOutputStream.flush();
+            // ???????
+            dataOutputStream.close();
+            out.close();
+            int value = process.waitFor();
+
+            // ?????
+            if (value == 0) {
+                result = true;
+                Toast.makeText(getApplicationContext(), "Stopped Service", Toast.LENGTH_LONG).show();
+            } else if (value == 1) { // ??
+                result = false;
+                Toast.makeText(getApplicationContext(), "Could not Stop Service", Toast.LENGTH_LONG).show();
+            } else { // ????
+                result = false;
+                Toast.makeText(getApplicationContext(), "Could not Stop Service", Toast.LENGTH_LONG).show();
+            }
+        } catch (IOException | InterruptedException e) {
+            Toast.makeText(getApplicationContext(), "Error Stopping Service", Toast.LENGTH_LONG).show();
+            Log.e(MAIN_TAG, "STARTING_SERVICE: ERROR STARTING SERVICE -> " + e.getLocalizedMessage());
+        }
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)

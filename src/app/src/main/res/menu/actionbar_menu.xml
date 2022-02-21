@@ -10,13 +10,34 @@
         android:id="@+id/menu_login"
         android:orderInCategory="100"
         android:icon="@drawable/ic_login"
-        app:showAsAction="always"
-        android:title="login" />
+        app:showAsAction="collapseActionView"
+        android:title="Login" />
     <item
         android:id="@+id/menu_logout"
         android:orderInCategory="100"
         android:visible="false"
         android:icon="@drawable/ic_logout"
-        app:showAsAction="always"
-        android:title="logout" />
+        app:showAsAction="collapseActionView"
+        android:title="Logout" />
+
+    <item
+        android:id="@+id/menu_start_service"
+        android:orderInCategory="100"
+        android:visible="true"
+        app:showAsAction="collapseActionView"
+        android:title="Start Service" />
+
+    <item
+        android:id="@+id/menu_stop_service"
+        android:orderInCategory="100"
+        android:visible="true"
+        app:showAsAction="collapseActionView"
+        android:title="Stop Service" />
+
+    <item
+        android:id="@+id/menu_grant_service_perms"
+        android:orderInCategory="100"
+        android:visible="true"
+        app:showAsAction="collapseActionView"
+        android:title="Grant Service Permissions" />
 </menu>

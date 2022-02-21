@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.IBinder;
+import android.os.ParcelFormatException;
 import android.os.RemoteException;
 import android.util.Log;
 import android.widget.ArrayAdapter;
@@ -100,8 +101,10 @@ public class ServiceHelper implements ServiceConnection {
 //        Toast.makeText(context.getApplicationContext(), "Service Connected", Toast.LENGTH_LONG).show();
         try {
             ProcessDeviceInfo(service.GetAllDeviceInfo());
+        } catch (ParcelFormatException ex){
+            Log.e(TAG, "onServiceConnected: " + ex.getLocalizedMessage());
         } catch (RemoteException exception) {
-//            Toast.makeText(context.getApplicationContext(), "Could not get device info", Toast.LENGTH_LONG).show();
+            Toast.makeText(context.getApplicationContext(), "Could not get device info", Toast.LENGTH_LONG).show();
         }
     }
 
