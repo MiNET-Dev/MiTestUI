@@ -120,7 +120,7 @@ public class ExternalFragment extends Fragment {
 
         File backgroundFile = new File(_BACKGROUND_DESTINATION_PATH);
 
-        if (!backgroundFile.exists()){
+        if (!backgroundFile.exists() || backgroundFile.length() == 0){
             try {
                 btnUploadBackground.setText("DOWNLOADING");
                 btnUploadBackground.setEnabled(false);
@@ -133,7 +133,7 @@ public class ExternalFragment extends Fragment {
 
         File overlayFile = new File(_OVERLAY_DESTINATION_PATH);
 
-        if (!overlayFile.exists()){
+        if (!overlayFile.exists() || backgroundFile.length() == 0){
             try {
                 btnUploadOverlay.setText("DOWNLOADING");
                 btnUploadOverlay.setEnabled(false);
@@ -146,7 +146,7 @@ public class ExternalFragment extends Fragment {
 
         File soundFile = new File(_SOUND_DESTINATION_PATH);
 
-        if (!soundFile.exists()){
+        if (!soundFile.exists() || backgroundFile.length() == 0){
             try {
                 btnUploadSound.setText("DOWNLOADING");
                 btnUploadSound.setEnabled(false);
