@@ -30,6 +30,7 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.WindowManager;
 import android.widget.Toast;
 import android.widget.Toolbar;
 
@@ -247,12 +248,53 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 stopMiNETService();
                 break;
             case R.id.menu_grant_service_perms:
-
+                grantServicePermissions();
+                Toast.makeText(getApplicationContext(), "Done Granting Service Permissions", Toast.LENGTH_LONG).show();
                 break;
             default:
                 break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void grantServicePermissions() {
+        Context current = getApplicationContext();
+        try {
+            String[] command = {
+                    "za.co.megaware.MinetService android.permission.CAMERA",
+                    "za.co.megaware.MinetService android.permission.READ_PHONE_STATE",
+                    "za.co.megaware.MinetService android.permission.ACCESS_SUPERUSER",
+                    "za.co.megaware.MinetService android.permission.ACCESS_FINE_LOCATION",
+                    "za.co.megaware.MinetService android.permission.ACCESS_COARSE_LOCATION",
+                    "za.co.megaware.MinetService android.permission.READ_EXTERNAL_STORAGE",
+                    "za.co.megaware.MinetService android.permission.WRITE_EXTERNAL_STORAGE",
+            };
+
+            for (int i = 0; i < command.length; i++) {
+                boolean result = GrantPermissionToService(command[i]);
+
+                if (result){
+
+                    try {
+//                        Toast.makeText(current, "Permission GRANTED", Toast.LENGTH_LONG).show();
+                    }
+                    catch (Exception ex) {
+//                        Log.e(MAIN_TAG, "GrantPermissionToService: ERROR GRANTING -> " + ex.getLocalizedMessage());
+                    }
+
+                } else {
+                    try {
+//                        Toast.makeText(current, "Permission DENIED", Toast.LENGTH_LONG).show();
+                    }
+                    catch (Exception ex) {
+//                        Log.e(MAIN_TAG, "GrantPermissionToService: ERROR GRANTING -> " + ex.getLocalizedMessage());
+                    }
+                }
+            }
+        } catch (Exception e){
+//                    Toast.makeText(getApplicationContext(), "Error Granting Permissions", Toast.LENGTH_LONG).show();
+//            Log.e(MAIN_TAG, "GrantPermissionToService: ERROR GRANTING -> " + e.getLocalizedMessage());
+        }
     }
 
     private void startMiNETService() {
@@ -322,6 +364,41 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         } catch (IOException | InterruptedException e) {
             Toast.makeText(getApplicationContext(), "Error Stopping Service", Toast.LENGTH_LONG).show();
             Log.e(MAIN_TAG, "STARTING_SERVICE: ERROR STARTING SERVICE -> " + e.getLocalizedMessage());
+        }
+    }
+
+    public boolean GrantPermissionToService(String permission) {
+        Log.d(MAIN_TAG, "GrantPermissionToService: STARTING GRANT");
+        boolean result = false;
+        java.lang.Process process = null;
+        OutputStream out = null;
+        try {
+            process = Runtime.getRuntime().exec("su");
+            out = process.getOutputStream();
+            DataOutputStream dataOutputStream = new DataOutputStream(out);
+            //dataOutputStream.writeBytes("chmod 777 " + file.getPath() + "\n");
+            dataOutputStream
+                    .writeBytes("LD_LIBRARY_PATH=/vendor/lib:/system/lib pm grant " + permission);
+            // ??????
+            dataOutputStream.flush();
+            // ???????
+            dataOutputStream.close();
+            out.close();
+            int value = process.waitFor();
+
+            if (value == 0) {
+                result = true;
+            } else if (value == 1) { // ??
+                result = false;
+            } else { // ????
+                result = false;
+            }
+
+            return result;
+        } catch (IOException | InterruptedException e) {
+//            Toast.makeText(getApplicationContext(), "Error Granting Permissions", Toast.LENGTH_LONG).show();
+            Log.e(MAIN_TAG, "GrantPermissionToService: ERROR GRANTING -> " + e.getLocalizedMessage());
+            return false;
         }
     }
 
