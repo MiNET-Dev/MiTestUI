@@ -101,10 +101,10 @@ public class ServiceHelper implements ServiceConnection {
 //        Toast.makeText(context.getApplicationContext(), "Service Connected", Toast.LENGTH_LONG).show();
         try {
             ProcessDeviceInfo(service.GetAllDeviceInfo());
-        } catch (ParcelFormatException ex){
-            Log.e(TAG, "onServiceConnected: " + ex.getLocalizedMessage());
         } catch (RemoteException exception) {
             Toast.makeText(context.getApplicationContext(), "Could not get device info", Toast.LENGTH_LONG).show();
+        } catch (Exception ex){
+            Log.e(TAG, "onServiceConnected: " + ex.getLocalizedMessage());
         }
     }
 

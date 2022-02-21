@@ -116,8 +116,8 @@ public class ServiceInfoFragment extends Fragment {
                     line = reader.readLine();
                 }
 
-            } catch (IOException e) {
-                e.printStackTrace();
+            } catch (Exception e) {
+                Log.e(TAG, "populateEventsFromDatePicked: " + e.getLocalizedMessage());
             }
 
         }
@@ -130,10 +130,6 @@ public class ServiceInfoFragment extends Fragment {
 
             switch(intent.getAction()){
                 case "MiDEVICE_EVENT":
-                    Log.e(TAG, "onReceive: " + intent.getSerializableExtra("eventType"));
-                    Log.e(TAG, "onReceive: " + intent.getSerializableExtra("eventTag"));
-                    Log.e(TAG, "onReceive: " + intent.getStringExtra("eventMessage"));
-                    Log.e(TAG, "onReceive: " + intent.getStringExtra("eventDate"));
 
                     serviceEvents.addView(new EventFragment(
                             getContext(),
