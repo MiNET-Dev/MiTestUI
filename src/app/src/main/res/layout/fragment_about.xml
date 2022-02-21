@@ -3,11 +3,82 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TextView
-        android:layout_width="wrap_content"
+    <RelativeLayout
+        android:id="@+id/headers"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="About Fragment"
-        android:textSize="30sp"
-        android:layout_centerInParent="true"/>
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/heading"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="false"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="20sp"
+            android:layout_marginTop="20sp"
+            android:layout_marginEnd="20sp"
+            android:layout_marginBottom="20sp"
+            android:text="MiDEVICE 7' Bus Touch"
+            android:textColor="@color/black"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/about_logo_minet"
+            android:layout_marginHorizontal="40sp"
+            android:layout_marginBottom="20sp"
+            android:text="MiDEVICE Testing application - This is not for commercial use, for testing purposes only"
+            android:textAlignment="center"
+            android:textColor="@color/black"
+            android:textSize="15sp" />
+
+        <ImageView
+            android:id="@+id/about_logo_minet"
+            android:layout_width="200dp"
+            android:layout_height="100dp"
+            android:layout_centerInParent="true"
+            android:adjustViewBounds="true"
+            android:contentDescription="Logo"
+            android:layout_marginBottom="20sp"
+            android:maxWidth="200dp"
+            android:maxHeight="200dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/logo_white" />
+
+        <TextView
+            android:id="@+id/about_txt_enquiries"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/about_logo_minet"
+            android:layout_centerHorizontal="true"
+            android:layout_marginHorizontal="40sp"
+            android:layout_marginBottom="20sp"
+            android:text="If you have any enquiries, or any feedback, please call us at the telephone number below"
+            android:textAlignment="center"
+            android:textColor="@color/black"
+            android:textSize="15sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/about_txt_enquiries"
+            android:layout_centerHorizontal="true"
+            android:layout_marginHorizontal="40sp"
+            android:layout_marginBottom="20sp"
+            android:text="Tel: 011 100 1500"
+            android:textAlignment="center"
+            android:textColor="@color/black"
+            android:textSize="15sp" />
+
+    </RelativeLayout>
 
 </RelativeLayout>

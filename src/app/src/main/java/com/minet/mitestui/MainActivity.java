@@ -21,7 +21,9 @@ import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Looper;
 import android.os.RemoteException;
 import android.os.StrictMode;
 import android.util.Log;
@@ -62,6 +64,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     HomeFragment.HomeReceiver homeReceiver;
     UpdatesFragment.UpdatesReceiver updatesReceiver;
     GPSFragment.GPSBroadcastReceiver gpsBroadcastReceiver;
+    ServiceInfoFragment.ServiceEventReceiver serviceEventReceiver;
 
     // TAGS
     private static final String MAIN_TAG = "MainActivity";
@@ -78,6 +81,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     Menu navigationMenu;
 
     Menu actionBarMenu;
+
+    private Handler handler;
 
     public static TechnicianModel loggedInUser = null;
 
@@ -99,6 +104,33 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         actionBarMenu = menu;
 
         return true;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        handler.removeCallbacksAndMessages(null);
+        super.onPause();
+    }
+
+    @Override
+    protected void onStop() {
+        handler.removeCallbacksAndMessages(null);
+        if (externalReaderReceiver != null)
+            unregisterReceiver(externalReaderReceiver);
+        if (nfcReceiver != null)
+            unregisterReceiver(nfcReceiver);
+        if (homeReceiver != null)
+            unregisterReceiver(homeReceiver);
+        if (updatesReceiver != null)
+            unregisterReceiver(updatesReceiver);
+        if (gpsBroadcastReceiver != null)
+            unregisterReceiver(gpsBroadcastReceiver);
+        super.onStop();
     }
 
     private String setDeviceNumber(){
@@ -176,6 +208,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
         ServiceHelper.getInstance().initService(this);
+
+        handler = new Handler(Looper.getMainLooper());
 
         setLoggedIn(true);
     }
@@ -299,16 +333,23 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new AboutFragment()).commit();
                 setTitle("About");
                 break;
-            case R.id.nav_tampers:
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new TampersFragment()).commit();
-                setTitle("Tampers");
-                break;
-            case R.id.nav_telemetry:
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new TelemetryFragment()).commit();
-                setTitle("Telemetry");
-                break;
+//            case R.id.nav_tampers:
+//                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new TampersFragment()).commit();
+//                setTitle("Tampers");
+//                break;
+//            case R.id.nav_telemetry:
+//                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new TelemetryFragment()).commit();
+//                setTitle("Telemetry");
+//                break;
             case R.id.nav_service_info:
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new ServiceInfoFragment()).commit();
+                // SETTING UP BROADCAST RECEIVERS
+                ServiceInfoFragment serviceInfo = new ServiceInfoFragment();
+                serviceEventReceiver = serviceInfo.new ServiceEventReceiver();
+                IntentFilter serviceEventFilter = new IntentFilter();
+                serviceEventFilter.addAction("MiDEVICE_EVENT");
+
+                this.registerReceiver(serviceEventReceiver, serviceEventFilter, null, null);
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, serviceInfo).commit();
                 setTitle("Service Info");
                 break;
             case R.id.nav_updates:
@@ -367,9 +408,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public void onLoginDialogPositiveClick(DialogFragment dialog, String username, String pin) {
         apiStore = new APIStore();
         try {
-//            apiStore.Login(username, pin, loginResponse);
+            apiStore.Login(username, pin, loginResponse);
 //            apiStore.Login("Nikitha", "1234", loginResponse);
-            apiStore.Login("lukegeyser", "1964", loginResponse);
+//            apiStore.Login("lukegeyser", "1964", loginResponse);
         } catch (Exception ex){
             //
         }
@@ -425,10 +466,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         navigationMenu.findItem(R.id.nav_lights).setEnabled(isLoggedIn);
 //        navigationMenu.findItem(R.id.nav_camera).setEnabled(isLoggedIn);
         navigationMenu.findItem(R.id.nav_hardware_info).setEnabled(isLoggedIn);
-//        navigationMenu.findItem(R.id.nav_about).setEnabled(isLoggedIn);
+        navigationMenu.findItem(R.id.nav_about).setEnabled(isLoggedIn);
 //        navigationMenu.findItem(R.id.nav_tampers).setEnabled(isLoggedIn);
 //        navigationMenu.findItem(R.id.nav_telemetry).setEnabled(isLoggedIn);
-//        navigationMenu.findItem(R.id.nav_service_info).setEnabled(isLoggedIn);
+        navigationMenu.findItem(R.id.nav_service_info).setEnabled(isLoggedIn);
         navigationMenu.findItem(R.id.nav_updates).setEnabled(isLoggedIn);
         navigationMenu.findItem(R.id.nav_qc_check).setEnabled(isLoggedIn);
 //        navigationMenu.findItem(R.id.nav_feedback).setEnabled(isLoggedIn);

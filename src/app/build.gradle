@@ -9,8 +9,8 @@ android {
         applicationId "com.minet.mitestui"
         minSdk 23
         targetSdk 29
-        versionCode 2
-        versionName "1.0.2"
+        versionCode 4
+        versionName "1.0.4"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -46,4 +46,5 @@ dependencies {
 
     implementation 'javax.annotation:javax.annotation-api:1.3.2'
     implementation 'com.google.code.gson:gson:2.8.6'
+    implementation 'gr.pantrif:easy-android-splash-screen:0.0.1'
 }
