@@ -544,6 +544,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_DENIED ||
                 ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_DENIED ||
                 ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_DENIED ||
+                ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_DENIED ||
                 ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_WIFI_STATE) == PackageManager.PERMISSION_DENIED) {
             requestPermissions();
         }
@@ -558,7 +559,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 Manifest.permission.ACCESS_FINE_LOCATION,
                 Manifest.permission.ACCESS_COARSE_LOCATION,
                 Manifest.permission.CAMERA,
-                Manifest.permission.ACCESS_WIFI_STATE
+                Manifest.permission.ACCESS_WIFI_STATE,
+                Manifest.permission.READ_PHONE_STATE
         }, 1000);
     }
 
@@ -566,9 +568,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public void onLoginDialogPositiveClick(DialogFragment dialog, String username, String pin) {
         apiStore = new APIStore();
         try {
-            apiStore.Login(username, pin, loginResponse);
+//            apiStore.Login(username, pin, loginResponse);
 //            apiStore.Login("Nikitha", "1234", loginResponse);
-//            apiStore.Login("lukegeyser", "1964", loginResponse);
+            apiStore.Login("lukegeyser", "1964", loginResponse);
         } catch (Exception ex){
             //
         }

@@ -1,10 +1,14 @@
 package com.minet.mitestui;
 
+import static android.content.Context.TELEPHONY_SERVICE;
+
+import android.annotation.SuppressLint;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,6 +31,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Objects;
 
 @RequiresApi(api = Build.VERSION_CODES.N)
 public class QCChecklistFragment extends Fragment implements FTPAsyncResponse {
@@ -57,11 +62,14 @@ public class QCChecklistFragment extends Fragment implements FTPAsyncResponse {
     private Boolean isInitChecked = false;
     private LinearLayout qcLayout;
     View QCCheckView;
+    TelephonyManager telephonyManager;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         QCCheckView = inflater.inflate(R.layout.fragment_qc_check, container, false);
+
+        telephonyManager = (TelephonyManager) Objects.requireNonNull(getContext()).getSystemService(TELEPHONY_SERVICE);
 
         btnSave = QCCheckView.findViewById(R.id.btn_save);
         btnRefresh = QCCheckView.findViewById(R.id.btn_refresh);
@@ -214,12 +222,17 @@ public class QCChecklistFragment extends Fragment implements FTPAsyncResponse {
         }
     }
 
+    @SuppressLint("HardwareIds")
     private boolean saveQCChecklist(){
         if (Utils.CheckDirectory("/MiDEVICE/")){
 
             if (Utils.CheckFile("/MiDEVICE/device-" + Utils.GetDeviceNumber() + "-qc.mi")){
 
                 ArrayList<String> _tempSet = new ArrayList<>();
+
+                _tempSet.add("SERIAL:" + Build.SERIAL);
+                _tempSet.add("DEVICE_NUMBER:" + Utils.GetDeviceNumber());
+                _tempSet.add("IMEI:" + telephonyManager.getDeviceId());
 
                 for (Integer key : checkBoxMap.keySet()) {
                     String valueToAdd = key + "," + checkBoxMap.get(key).getIsChecked() + "," + checkBoxMap.get(key).getQCName();
@@ -247,18 +260,30 @@ public class QCChecklistFragment extends Fragment implements FTPAsyncResponse {
             is = new FileInputStream(file);
             reader = new BufferedReader(new InputStreamReader(is));
             String line = reader.readLine();
+            int lineNumber = 0;
+            boolean containSerial = false;
             while(line != null){
 
                 Log.d("StackOverflow", line);
 
-                String[] _temp = line.split(",");
+                try {
+                    if (!containSerial)
+                        containSerial = line.split(":")[0].equals("SERIAL");
+                } catch (Exception e){
+                    Log.e(TAG, "readFile: " + e.getLocalizedMessage());
+                }
 
-                if (_temp[1].equals("true"))
-                    savedCheckBoxMap.put(Integer.valueOf(_temp[0]), new QCCheckListInfo(true, _temp[2]));
-                else
-                    savedCheckBoxMap.put(Integer.valueOf(_temp[0]), new QCCheckListInfo(false, _temp[2]));
+                if (lineNumber > 2 || !containSerial){
+                    String[] _temp = line.split(",");
+
+                    if (_temp[1].equals("true"))
+                        savedCheckBoxMap.put(Integer.valueOf(_temp[0]), new QCCheckListInfo(true, _temp[2]));
+                    else
+                        savedCheckBoxMap.put(Integer.valueOf(_temp[0]), new QCCheckListInfo(false, _temp[2]));
+                }
 
                 line = reader.readLine();
+                lineNumber++;
             }
         }
     }
@@ -284,6 +309,7 @@ public class QCChecklistFragment extends Fragment implements FTPAsyncResponse {
             Boolean didSave = saveQCChecklist();
             if (!didSave) Toast.makeText(getContext(), "Something went wrong with quick saving", Toast.LENGTH_LONG).show();
         } catch (Exception exception){
+            Log.e(TAG, "ERROR: " + exception.getLocalizedMessage());
             Toast.makeText(getContext(), "Something went wrong", Toast.LENGTH_LONG).show();
         }
     };
