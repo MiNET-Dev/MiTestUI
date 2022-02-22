@@ -81,6 +81,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     HomeFragment homeFragment;
     UpdatesFragment updatesFragment;
     NavigationView navigationView;
+    QCChecklistFragment qcCheckListFragment;
     Menu navigationMenu;
 
     Menu actionBarMenu;
@@ -222,6 +223,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     // the item click listener callback
     // to open and close the navigation
     // drawer when the icon is clicked
+    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 
@@ -239,9 +241,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 actionBarMenu.findItem(R.id.menu_login).setVisible(true);
                 actionBarMenu.findItem(R.id.menu_logout).setVisible(false);
                 loggedInUser = null;
-                setLoggedIn(false);
-//                LoginDialogFragment loginDialogFragment = new LoginDialogFragment();
-//                loginDialogFragment.show(getSupportFragmentManager(), LoginDialogFragment.TAG);
+                navigationMenu.findItem(R.id.nav_profile).setEnabled(false);
+                if (qcCheckListFragment != null){
+                    if (qcCheckListFragment.isVisible())
+                        qcCheckListFragment.setLoggedIn(false);
+                }
                 break;
             case R.id.menu_start_service:
                 startMiNETService();
@@ -524,7 +528,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 setTitle("Updates");
                 break;
             case R.id.nav_qc_check:
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new QCChecklistFragment()).commit();
+                qcCheckListFragment = new QCChecklistFragment();
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, qcCheckListFragment).commit();
                 setTitle("QC Checklist");
                 break;
             case R.id.nav_feedback:
@@ -570,15 +575,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public void onLoginDialogPositiveClick(DialogFragment dialog, String username, String pin) {
         apiStore = new APIStore();
         try {
-            apiStore.Login(username, pin, loginResponse);
+//            apiStore.Login(username, pin, loginResponse);
 //            apiStore.Login("Nikitha", "1234", loginResponse);
-//            apiStore.Login("lukegeyser", "1964", loginResponse);
+            apiStore.Login("lukegeyser", "1964", loginResponse);
         } catch (Exception ex){
             //
         }
     }
 
     Callback<ResponseBody> loginResponse = new Callback<ResponseBody>() {
+        @RequiresApi(api = Build.VERSION_CODES.N)
         @Override
         public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
             Log.d("retrofit", "Send Data success");
@@ -594,6 +600,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         actionBarMenu.findItem(R.id.menu_login).setVisible(false);
                         actionBarMenu.findItem(R.id.menu_logout).setVisible(true);
                         navigationMenu.findItem(R.id.nav_profile).setEnabled(true);
+                        if (qcCheckListFragment != null){
+                            if (qcCheckListFragment.isVisible())
+                                qcCheckListFragment.setLoggedIn(true);
+                        }
                     } catch (Exception e) {
                         // handle failure to read error
                         Log.v("gson error","error when gson process");

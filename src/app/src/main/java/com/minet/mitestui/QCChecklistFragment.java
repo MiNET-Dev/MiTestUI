@@ -17,6 +17,8 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -64,6 +66,9 @@ public class QCChecklistFragment extends Fragment implements FTPAsyncResponse {
     View QCCheckView;
     TelephonyManager telephonyManager;
 
+    RelativeLayout rlNoUserView;
+    ScrollView qcScrollView;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -78,16 +83,14 @@ public class QCChecklistFragment extends Fragment implements FTPAsyncResponse {
 
         qcLayout = QCCheckView.findViewById(R.id.qc_full_checklist);
 
+        rlNoUserView = QCCheckView.findViewById(R.id.qc_no_user);
+
+        qcScrollView = QCCheckView.findViewById(R.id.qc_main_content);
+
         btnSave.setOnClickListener(saveClicked);
         btnRefresh.setOnClickListener(refreshClicked);
 
-        try {
-            readFile();
-        } catch (IOException ioException) {
-            ioException.printStackTrace();
-        }
-
-        configureAllCheckBoxes(QCCheckView);
+        setLoggedIn(MainActivity.loggedInUser != null);
 
         return QCCheckView;
     }
@@ -341,5 +344,27 @@ public class QCChecklistFragment extends Fragment implements FTPAsyncResponse {
         }
         else
             Toast.makeText(getContext(), "FTP SYNC FAILED", Toast.LENGTH_LONG).show();
+    }
+
+    public void setLoggedIn(boolean isLoggedIn){
+        if (!isLoggedIn){
+            rlNoUserView.setVisibility(View.VISIBLE);
+            qcScrollView.setVisibility(View.GONE);
+            btnSave.setVisibility(View.GONE);
+            btnRefresh.setVisibility(View.GONE);
+        } else {
+            rlNoUserView.setVisibility(View.GONE);
+            qcScrollView.setVisibility(View.VISIBLE);
+            btnSave.setVisibility(View.VISIBLE);
+            btnRefresh.setVisibility(View.VISIBLE);
+
+            try {
+                readFile();
+            } catch (IOException ioException) {
+                ioException.printStackTrace();
+            }
+
+            configureAllCheckBoxes(QCCheckView);
+        }
     }
 }
