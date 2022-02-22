@@ -1,10 +1,12 @@
 package com.minet.mitestui;
 
+import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.RemoteException;
 import android.util.Log;
@@ -69,6 +71,7 @@ public class HomeFragment extends Fragment {
     private TextView txtIMEI;
     private TextView txtMACAddress;
     private TextView txtIPAddress;
+    private TextView txtSerial;
 
     // APP VERSIONS
     private TextView txtServiceVersion;
@@ -81,6 +84,7 @@ public class HomeFragment extends Fragment {
     private TextView txtVersion;
     private TextView txtBatteryStatus;
 
+    @SuppressLint("HardwareIds")
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -111,6 +115,7 @@ public class HomeFragment extends Fragment {
         txtIPAddress = homeFragment.findViewById(R.id.txt_home_ip);
         txtMACAddress = homeFragment.findViewById(R.id.txt_home_mac);
         txtIMEI = homeFragment.findViewById(R.id.txt_home_imei);
+        txtSerial = homeFragment.findViewById(R.id.txt_home_serial);
         txtTamperPole = homeFragment.findViewById(R.id.txt_home_pole_tamper);
         txtTamperBracket = homeFragment.findViewById(R.id.txt_home_bracket_tamper);
         txtTamperInternal = homeFragment.findViewById(R.id.txt_home_internal_tamper);
@@ -123,6 +128,8 @@ public class HomeFragment extends Fragment {
 
         txtUIVersion.setText(String.format("v%s", localNewUI));
         txtServiceVersion.setText(String.format("v%s", localService));
+
+        txtSerial.setText(Build.SERIAL.substring(6));
 
         if (ServiceHelper.getInstance().isConnected()){
             syncWithService();

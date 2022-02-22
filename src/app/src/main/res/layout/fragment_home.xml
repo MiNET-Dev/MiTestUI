@@ -40,7 +40,7 @@
                         android:maxWidth="70dp"
                         android:maxHeight="70dp"
                         android:scaleType="fitCenter"
-                        android:src="@drawable/ic_info" />
+                        android:src="@drawable/ic_imei" />
 
                     <LinearLayout
                         android:layout_width="wrap_content"
@@ -62,7 +62,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginEnd="10sp"
-                            android:text="1234567890"
+                            android:text="~"
                             android:textSize="10sp" />
                     </LinearLayout>
 
@@ -87,7 +87,7 @@
                         android:maxWidth="70dp"
                         android:maxHeight="70dp"
                         android:scaleType="fitCenter"
-                        android:src="@drawable/ic_info" />
+                        android:src="@drawable/ic_mac_address" />
 
                     <LinearLayout
                         android:layout_width="wrap_content"
@@ -109,7 +109,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginEnd="10sp"
-                            android:text="00:00:00:00:00:00"
+                            android:text="~"
                             android:textSize="10sp" />
                     </LinearLayout>
 
@@ -141,7 +141,7 @@
                         android:maxWidth="70dp"
                         android:maxHeight="70dp"
                         android:scaleType="fitCenter"
-                        android:src="@drawable/ic_info" />
+                        android:src="@drawable/ic_ip_address" />
 
                     <LinearLayout
                         android:layout_width="wrap_content"
@@ -163,7 +163,54 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginEnd="10sp"
-                            android:text="127.0.0.1"
+                            android:text="~"
+                            android:textSize="10sp" />
+                    </LinearLayout>
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="155sp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginVertical="10sp"
+                    android:layout_marginRight="5sp"
+                    android:background="@drawable/border"
+                    android:elevation="7dp"
+                    android:padding="10sp">
+
+                    <ImageView
+                        android:id="@+id/home_ic_serial"
+                        android:layout_width="25dp"
+                        android:layout_height="25dp"
+                        android:layout_centerVertical="true"
+                        android:layout_marginEnd="20sp"
+                        android:adjustViewBounds="true"
+                        android:maxWidth="70dp"
+                        android:maxHeight="70dp"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/ic_serial" />
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_toRightOf="@+id/home_ic_serial"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="10sp"
+                            android:text="DEVICE SERIAL"
+                            android:textColor="@color/black"
+                            android:textSize="9sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/txt_home_serial"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="10sp"
+                            android:text="~"
                             android:textSize="10sp" />
                     </LinearLayout>
 
@@ -226,7 +273,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginEnd="10sp"
-                            android:text="v1.0.39"
+                            android:text="~"
                             android:textSize="10sp" />
                     </LinearLayout>
 
@@ -273,7 +320,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginEnd="10sp"
-                            android:text="v1.0.2"
+                            android:text="~"
                             android:textSize="10sp" />
                     </LinearLayout>
 
@@ -313,7 +360,7 @@
                         android:maxWidth="70dp"
                         android:maxHeight="70dp"
                         android:scaleType="fitCenter"
-                        android:src="@drawable/ic_info" />
+                        android:src="@drawable/ic_battery" />
 
                     <LinearLayout
                         android:layout_width="wrap_content"
@@ -326,8 +373,8 @@
                             android:layout_height="wrap_content"
                             android:layout_marginEnd="10sp"
                             android:text="BATTERY"
-                            android:textSize="9sp"
                             android:textColor="@color/black"
+                            android:textSize="9sp"
                             android:textStyle="bold" />
 
                         <TextView
@@ -335,7 +382,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginEnd="10sp"
-                            android:text="89%"
+                            android:text="~"
                             android:textSize="10sp" />
                     </LinearLayout>
 
@@ -360,7 +407,7 @@
                         android:maxWidth="70dp"
                         android:maxHeight="70dp"
                         android:scaleType="fitCenter"
-                        android:src="@drawable/ic_info" />
+                        android:src="@drawable/ic_temperature" />
 
                     <LinearLayout
                         android:layout_width="wrap_content"
@@ -382,7 +429,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginEnd="10sp"
-                            android:text="67.9 C"
+                            android:text="~"
                             android:textSize="10sp" />
                     </LinearLayout>
 
@@ -414,7 +461,7 @@
                         android:maxWidth="70dp"
                         android:maxHeight="70dp"
                         android:scaleType="fitCenter"
-                        android:src="@drawable/ic_info" />
+                        android:src="@drawable/ic_input_voltage" />
 
                     <LinearLayout
                         android:layout_width="wrap_content"
@@ -436,7 +483,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginEnd="10sp"
-                            android:text="23.8 V"
+                            android:text="~"
                             android:textSize="10sp" />
                     </LinearLayout>
 
@@ -474,8 +521,8 @@
                             android:layout_height="wrap_content"
                             android:layout_marginEnd="10sp"
                             android:text="VERSION"
-                            android:textSize="9sp"
                             android:textColor="@color/black"
+                            android:textSize="9sp"
                             android:textStyle="bold" />
 
                         <TextView
@@ -515,7 +562,7 @@
                         android:maxWidth="70dp"
                         android:maxHeight="70dp"
                         android:scaleType="fitCenter"
-                        android:src="@drawable/ic_info" />
+                        android:src="@drawable/ic_battery_status" />
 
                     <LinearLayout
                         android:layout_width="wrap_content"
@@ -537,7 +584,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginEnd="10sp"
-                            android:text="charging"
+                            android:text="~"
                             android:textSize="10sp" />
                     </LinearLayout>
 
