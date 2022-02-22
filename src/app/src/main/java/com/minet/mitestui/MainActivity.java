@@ -238,6 +238,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             case R.id.menu_logout:
                 actionBarMenu.findItem(R.id.menu_login).setVisible(true);
                 actionBarMenu.findItem(R.id.menu_logout).setVisible(false);
+                loggedInUser = null;
+                setLoggedIn(false);
 //                LoginDialogFragment loginDialogFragment = new LoginDialogFragment();
 //                loginDialogFragment.show(getSupportFragmentManager(), LoginDialogFragment.TAG);
                 break;
@@ -568,9 +570,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public void onLoginDialogPositiveClick(DialogFragment dialog, String username, String pin) {
         apiStore = new APIStore();
         try {
-//            apiStore.Login(username, pin, loginResponse);
+            apiStore.Login(username, pin, loginResponse);
 //            apiStore.Login("Nikitha", "1234", loginResponse);
-            apiStore.Login("lukegeyser", "1964", loginResponse);
+//            apiStore.Login("lukegeyser", "1964", loginResponse);
         } catch (Exception ex){
             //
         }
