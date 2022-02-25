@@ -1,18 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/home_fab_update"
+        android:layout_width="80sp"
+        android:layout_height="80sp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="15sp"
+        android:backgroundTint="@color/purple_700"
+        android:contentDescription="fab_update"
+        android:src="@drawable/ic_question_white"
+        android:visibility="gone"
+        app:borderWidth="0sp"
+        app:tint="@android:color/white" />
+
+    <LinearLayout
+        android:id="@+id/home_update_notification_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:orientation="vertical"
+        android:paddingTop="10sp" />
+
     <ScrollView
         android:layout_width="match_parent"
-        android:foregroundGravity="center"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/home_update_notification_layout"
+        android:foregroundGravity="center">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:orientation="vertical"
+            android:layout_height="wrap_content"
             android:gravity="center"
-            android:layout_height="wrap_content">
+            android:orientation="vertical">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -53,8 +77,8 @@
                             android:layout_height="wrap_content"
                             android:layout_marginEnd="10sp"
                             android:text="IMEI"
-                            android:textSize="9sp"
                             android:textColor="@color/black"
+                            android:textSize="9sp"
                             android:textStyle="bold" />
 
                         <TextView
@@ -100,8 +124,8 @@
                             android:layout_height="wrap_content"
                             android:layout_marginEnd="10sp"
                             android:text="MAC ADDRESS"
-                            android:textSize="9sp"
                             android:textColor="@color/black"
+                            android:textSize="9sp"
                             android:textStyle="bold" />
 
                         <TextView
@@ -154,8 +178,8 @@
                             android:layout_height="wrap_content"
                             android:layout_marginEnd="10sp"
                             android:text="IP ADDRESS"
-                            android:textSize="9sp"
                             android:textColor="@color/black"
+                            android:textSize="9sp"
                             android:textStyle="bold" />
 
                         <TextView
@@ -221,10 +245,10 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/black"
-                android:textStyle="bold"
                 android:layout_margin="10sp"
-                android:text="APP VERSIONS"/>
+                android:text="APP VERSIONS"
+                android:textColor="@color/black"
+                android:textStyle="bold" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -264,8 +288,8 @@
                             android:layout_height="wrap_content"
                             android:layout_marginEnd="10sp"
                             android:text="SERVICE VERSION"
-                            android:textSize="9sp"
                             android:textColor="@color/black"
+                            android:textSize="9sp"
                             android:textStyle="bold" />
 
                         <TextView
@@ -311,8 +335,8 @@
                             android:layout_height="wrap_content"
                             android:layout_marginEnd="10sp"
                             android:text="NEW UI VERSION"
-                            android:textSize="9sp"
                             android:textColor="@color/black"
+                            android:textSize="9sp"
                             android:textStyle="bold" />
 
                         <TextView
@@ -330,10 +354,10 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/black"
                 android:layout_margin="10sp"
-                android:textStyle="bold"
-                android:text="TELEMETRY"/>
+                android:text="TELEMETRY"
+                android:textColor="@color/black"
+                android:textStyle="bold" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -420,8 +444,8 @@
                             android:layout_height="wrap_content"
                             android:layout_marginEnd="10sp"
                             android:text="TEMPERATURE"
-                            android:textSize="9sp"
                             android:textColor="@color/black"
+                            android:textSize="9sp"
                             android:textStyle="bold" />
 
                         <TextView
@@ -474,8 +498,8 @@
                             android:layout_height="wrap_content"
                             android:layout_marginEnd="10sp"
                             android:text="INPUT"
-                            android:textSize="9sp"
                             android:textColor="@color/black"
+                            android:textSize="9sp"
                             android:textStyle="bold" />
 
                         <TextView
@@ -575,8 +599,8 @@
                             android:layout_height="wrap_content"
                             android:layout_marginEnd="10sp"
                             android:text="BATTERY STATUS"
-                            android:textSize="9sp"
                             android:textColor="@color/black"
+                            android:textSize="9sp"
                             android:textStyle="bold" />
 
                         <TextView
@@ -594,10 +618,10 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/black"
                 android:layout_margin="10sp"
-                android:textStyle="bold"
-                android:text="PRINTER TAMPERS"/>
+                android:text="PRINTER TAMPERS"
+                android:textColor="@color/black"
+                android:textStyle="bold" />
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -632,8 +656,8 @@
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="10sp"
                         android:text="PRINTER TRAY"
-                        android:textSize="9sp"
                         android:textColor="@color/black"
+                        android:textSize="9sp"
                         android:textStyle="bold" />
 
                     <TextView
@@ -671,8 +695,8 @@
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="10sp"
                         android:text="PRINTER TRAY"
-                        android:textSize="9sp"
                         android:textColor="@color/black"
+                        android:textSize="9sp"
                         android:textStyle="bold" />
 
                     <TextView
@@ -689,10 +713,10 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/black"
                 android:layout_margin="10sp"
-                android:textStyle="bold"
-                android:text="SENSOR TAMPERS"/>
+                android:text="SENSOR TAMPERS"
+                android:textColor="@color/black"
+                android:textStyle="bold" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -732,8 +756,8 @@
                             android:layout_height="wrap_content"
                             android:layout_marginEnd="10sp"
                             android:text="INTERNAL"
-                            android:textSize="9sp"
                             android:textColor="@color/black"
+                            android:textSize="9sp"
                             android:textStyle="bold" />
 
                         <TextView
@@ -779,8 +803,8 @@
                             android:layout_height="wrap_content"
                             android:layout_marginEnd="10sp"
                             android:text="BRACKET"
-                            android:textSize="9sp"
                             android:textColor="@color/black"
+                            android:textSize="9sp"
                             android:textStyle="bold" />
 
                         <TextView
@@ -834,8 +858,8 @@
                             android:layout_height="wrap_content"
                             android:layout_marginEnd="10sp"
                             android:text="POLE"
-                            android:textSize="9sp"
                             android:textColor="@color/black"
+                            android:textSize="9sp"
                             android:textStyle="bold" />
 
                         <TextView

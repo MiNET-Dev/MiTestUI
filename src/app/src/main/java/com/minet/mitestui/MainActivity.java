@@ -18,6 +18,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -30,13 +31,16 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.WindowManager;
 import android.widget.Toast;
 import android.widget.Toolbar;
 
 //import com.google.android.material.navigation.NavigationBarView;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.internal.NavigationMenu;
 import com.google.android.material.navigation.NavigationView;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -46,6 +50,9 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.util.HashSet;
 import java.util.Locale;
 import java.util.Objects;
 
@@ -90,6 +97,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     public static TechnicianModel loggedInUser = null;
 
+    Snackbar errorSnack;
+
     APIStore apiStore;
 
     @Override
@@ -124,40 +133,44 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     protected void onStop() {
         handler.removeCallbacksAndMessages(null);
-        if (externalReaderReceiver != null)
-            unregisterReceiver(externalReaderReceiver);
-        if (nfcReceiver != null)
-            unregisterReceiver(nfcReceiver);
-        if (homeReceiver != null)
-            unregisterReceiver(homeReceiver);
-        if (updatesReceiver != null)
-            unregisterReceiver(updatesReceiver);
-        if (gpsBroadcastReceiver != null)
-            unregisterReceiver(gpsBroadcastReceiver);
+        try {
+            if (externalReaderReceiver != null)
+                unregisterReceiver(externalReaderReceiver);
+            if (nfcReceiver != null)
+                unregisterReceiver(nfcReceiver);
+            if (homeReceiver != null)
+                unregisterReceiver(homeReceiver);
+            if (updatesReceiver != null)
+                unregisterReceiver(updatesReceiver);
+            if (gpsBroadcastReceiver != null)
+                unregisterReceiver(gpsBroadcastReceiver);
+        } catch (IllegalArgumentException ex){
+            Log.e(MAIN_TAG, "onStop: " + ex.getLocalizedMessage());
+        }
         super.onStop();
     }
 
-    private String setDeviceNumber(){
+    private String setDeviceNumber() {
         File deviceNumberFile = new File(_DEVICE_NUMBER_PATH);
 
-        if (deviceNumberFile.exists()){
+        if (deviceNumberFile.exists()) {
             try {
                 BufferedReader reader = new BufferedReader(new FileReader(deviceNumberFile));
 
                 String currentLine;
 
-                while ((currentLine = reader.readLine()) != null){
+                while ((currentLine = reader.readLine()) != null) {
                     try {
                         int deviceNumber = Integer.parseInt(currentLine);
 
                         return String.valueOf(deviceNumber);
-                    } catch (NumberFormatException exception){
+                    } catch (NumberFormatException exception) {
                         Toast.makeText(this, "Not a valid Device Number", Toast.LENGTH_LONG).show();
                         return "not set";
                     }
                 }
 
-            } catch (IOException ex){
+            } catch (IOException ex) {
                 ex.printStackTrace();
                 return "not set";
             }
@@ -186,6 +199,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         navigationView.setNavigationItemSelectedListener(this);
 
         navigationMenu = navigationView.getMenu();
+
+        navigationMenu.findItem(R.id.nav_updates);
 
         // pass the Open and Close toggle for the drawer layout listener
         // to toggle the button
@@ -242,7 +257,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 actionBarMenu.findItem(R.id.menu_logout).setVisible(false);
                 loggedInUser = null;
                 navigationMenu.findItem(R.id.nav_profile).setEnabled(false);
-                if (qcCheckListFragment != null){
+
+                actionBarMenu.findItem(R.id.menu_set_kiosk).setVisible(false);
+                actionBarMenu.findItem(R.id.menu_enabled_kiosk).setVisible(false);
+                actionBarMenu.findItem(R.id.menu_disable_kiosk).setVisible(false);
+
+                if (qcCheckListFragment != null) {
                     if (qcCheckListFragment.isVisible())
                         qcCheckListFragment.setLoggedIn(false);
                 }
@@ -256,6 +276,21 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             case R.id.menu_grant_service_perms:
                 grantServicePermissions();
                 Toast.makeText(getApplicationContext(), "Done Granting Service Permissions", Toast.LENGTH_LONG).show();
+                break;
+            case R.id.menu_set_kiosk:
+                setKioskKey(false);
+                changePrefs();
+                setKioskKey(true);
+                break;
+            case R.id.menu_enabled_kiosk:
+                Intent enableKioskIntent = new Intent();
+                enableKioskIntent.setAction("ENABLE_KIOSK");
+                sendOrderedBroadcast(enableKioskIntent, null);
+                break;
+            case R.id.menu_disable_kiosk:
+                Intent disableKioskIntent = new Intent();
+                disableKioskIntent.setAction("DISABLE_KIOSK");
+                sendOrderedBroadcast(disableKioskIntent, null);
                 break;
             default:
                 break;
@@ -279,25 +314,23 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             for (int i = 0; i < command.length; i++) {
                 boolean result = GrantPermissionToService(command[i]);
 
-                if (result){
+                if (result) {
 
                     try {
 //                        Toast.makeText(current, "Permission GRANTED", Toast.LENGTH_LONG).show();
-                    }
-                    catch (Exception ex) {
+                    } catch (Exception ex) {
 //                        Log.e(MAIN_TAG, "GrantPermissionToService: ERROR GRANTING -> " + ex.getLocalizedMessage());
                     }
 
                 } else {
                     try {
 //                        Toast.makeText(current, "Permission DENIED", Toast.LENGTH_LONG).show();
-                    }
-                    catch (Exception ex) {
+                    } catch (Exception ex) {
 //                        Log.e(MAIN_TAG, "GrantPermissionToService: ERROR GRANTING -> " + ex.getLocalizedMessage());
                     }
                 }
             }
-        } catch (Exception e){
+        } catch (Exception e) {
 //                    Toast.makeText(getApplicationContext(), "Error Granting Permissions", Toast.LENGTH_LONG).show();
 //            Log.e(MAIN_TAG, "GrantPermissionToService: ERROR GRANTING -> " + e.getLocalizedMessage());
         }
@@ -557,6 +590,67 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
+    public void changePrefs() {
+        try {
+            Process proc = Runtime.getRuntime().exec(new String[]{"su", "-c", "chmod 777 /data/data/com.emteria.kiosk/shared_prefs/com.emteria.kiosk_preferences.xml"});
+            proc.waitFor();
+            proc = Runtime.getRuntime().exec(new String[]{"su", "-c", "chmod 777 /data/data/com.emteria.kiosk/shared_prefs"});
+            proc.waitFor();
+            proc = Runtime.getRuntime().exec(new String[]{"su", "-c", "chmod 777 /data/data/com.emteria.kiosk"});
+            proc.waitFor();
+
+            File preffile = new File("/data/data/com.emteria.kiosk/shared_prefs/com.emteria.kiosk_preferences.xml");
+
+            Class prefimplclass = Class.forName("android.app.SharedPreferencesImpl");
+
+            Constructor prefimplconstructor = prefimplclass.getDeclaredConstructor(File.class, int.class);
+            prefimplconstructor.setAccessible(true);
+
+            Object prefimpl = prefimplconstructor.newInstance(preffile, Context.MODE_WORLD_READABLE | Context.MODE_WORLD_WRITEABLE);
+
+            SharedPreferences.Editor editor = (SharedPreferences.Editor) prefimplclass.getMethod("edit").invoke(prefimpl);
+
+            editor.putString("prefs_password_key", "test");
+            HashSet<String> set = new HashSet<String>();
+            set.add("com.minet.mitestui");
+//            set.add("com.bps.bpass.mainpackage");
+            editor.putStringSet("prefs_allowed_apps", set);
+            editor.commit();
+            Toast.makeText(getApplicationContext(), "Kiosk Settings complete", Toast.LENGTH_LONG).show();
+        } catch (IOException | InterruptedException | ClassNotFoundException | InvocationTargetException | NoSuchMethodException | IllegalAccessException | InstantiationException e) {
+            Log.e(MAIN_TAG, "changePrefs: " + e.getLocalizedMessage());
+            Toast.makeText(getApplicationContext(), "Error Setting Kiosk Settings", Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private void setKioskKey(boolean keyOn) {
+        try {
+            Process proc = Runtime.getRuntime().exec(new String[]{"su", "-c", "chmod 777 /data/data/com.emteria.kiosk/shared_prefs/com.emteria.kiosk_preferences.xml"});
+            proc.waitFor();
+            proc = Runtime.getRuntime().exec(new String[]{"su", "-c", "chmod 777 /data/data/com.emteria.kiosk/shared_prefs"});
+            proc.waitFor();
+            proc = Runtime.getRuntime().exec(new String[]{"su", "-c", "chmod 777 /data/data/com.emteria.kiosk"});
+            proc.waitFor();
+
+            File preffile = new File("/data/data/com.emteria.kiosk/shared_prefs/com.emteria.kiosk_preferences.xml");
+
+            Class prefimplclass = Class.forName("android.app.SharedPreferencesImpl");
+
+            Constructor prefimplconstructor = prefimplclass.getDeclaredConstructor(File.class, int.class);
+            prefimplconstructor.setAccessible(true);
+
+            Object prefimpl = prefimplconstructor.newInstance(preffile, Context.MODE_WORLD_READABLE | Context.MODE_WORLD_WRITEABLE);
+
+            SharedPreferences.Editor editor = (SharedPreferences.Editor) prefimplclass.getMethod("edit").invoke(prefimpl);
+            editor.putBoolean("prefs_kiosk_enabled_key", keyOn);
+            editor.commit();
+//            Toast.makeText(getApplicationContext(), "Kiosk Key: " + keyOn, Toast.LENGTH_SHORT).show();
+        } catch (IOException | InterruptedException | ClassNotFoundException | InvocationTargetException | NoSuchMethodException | IllegalAccessException | InstantiationException e) {
+            Log.e(MAIN_TAG, "changePrefs: " + e.getLocalizedMessage());
+//            Toast.makeText(getApplicationContext(), "Error Setting Kiosk Settings", Toast.LENGTH_LONG).show();
+        }
+    }
+
     public void requestPermissions() {
         ActivityCompat.requestPermissions(MainActivity.this, new String[]{
                 Manifest.permission.READ_EXTERNAL_STORAGE,
@@ -575,10 +669,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public void onLoginDialogPositiveClick(DialogFragment dialog, String username, String pin) {
         apiStore = new APIStore();
         try {
-//            apiStore.Login(username, pin, loginResponse);
+            apiStore.Login(username, pin, loginResponse);
 //            apiStore.Login("Nikitha", "1234", loginResponse);
-            apiStore.Login("lukegeyser", "1964", loginResponse);
-        } catch (Exception ex){
+//            apiStore.Login("lukegeyser", "1964", loginResponse);
+        } catch (Exception ex) {
             //
         }
     }
@@ -590,8 +684,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             Log.d("retrofit", "Send Data success");
             try {
 
-                if (response.isSuccessful()){
-                    String  bodyString = new String(response.body().bytes());
+                if (response.isSuccessful()) {
+                    String bodyString = new String(response.body().bytes());
 
                     Gson gson = new GsonBuilder().create();
                     try {
@@ -600,20 +694,38 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         actionBarMenu.findItem(R.id.menu_login).setVisible(false);
                         actionBarMenu.findItem(R.id.menu_logout).setVisible(true);
                         navigationMenu.findItem(R.id.nav_profile).setEnabled(true);
-                        if (qcCheckListFragment != null){
+
+                        actionBarMenu.findItem(R.id.menu_set_kiosk).setVisible(true);
+                        actionBarMenu.findItem(R.id.menu_enabled_kiosk).setVisible(true);
+                        actionBarMenu.findItem(R.id.menu_disable_kiosk).setVisible(true);
+
+                        Snackbar.make(getCurrentFocus(), "User Logged In", Snackbar.LENGTH_LONG).show();
+
+                        if (qcCheckListFragment != null) {
                             if (qcCheckListFragment.isVisible())
                                 qcCheckListFragment.setLoggedIn(true);
                         }
                     } catch (Exception e) {
                         // handle failure to read error
-                        Log.v("gson error","error when gson process");
-                        Toast.makeText(getApplicationContext(), "error logging in", Toast.LENGTH_LONG).show();
+                        Log.v("gson error", "error when gson process");
+
+                        errorSnack = Snackbar.make(getCurrentFocus(), "Error logging in", Snackbar.LENGTH_INDEFINITE)
+                                .setAction("X", view -> {
+                                    errorSnack.dismiss();
+                                });
+
+                        errorSnack.show();
                     }
 
                 } else {
                     // FAILED
                     Log.e(MAIN_TAG, "onResponse: error logging in");
-                    Toast.makeText(getApplicationContext(), "error logging in", Toast.LENGTH_LONG).show();
+                    errorSnack = Snackbar.make(getCurrentFocus(), "Error logging in", Snackbar.LENGTH_INDEFINITE)
+                            .setAction("X", view -> {
+                                errorSnack.dismiss();
+                            });
+
+                    errorSnack.show();
                 }
 
             } catch (IOException e) {
