@@ -47,7 +47,7 @@ public class PrinterFragment extends Fragment {
 
         File imageFile = new File(_DESTINATION_PATH);
 
-        if (!imageFile.exists()){
+        if (!imageFile.exists() || imageFile.length() == 0){
             try {
                 btnPrint.setEnabled(false);
                 btnPrint.setText("DOWNLOADING");

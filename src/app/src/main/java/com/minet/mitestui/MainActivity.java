@@ -748,7 +748,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         navigationMenu.findItem(R.id.nav_external).setEnabled(isLoggedIn);
         navigationMenu.findItem(R.id.nav_gps).setEnabled(isLoggedIn);
         navigationMenu.findItem(R.id.nav_lights).setEnabled(isLoggedIn);
-//        navigationMenu.findItem(R.id.nav_camera).setEnabled(isLoggedIn);
+        navigationMenu.findItem(R.id.nav_camera).setEnabled(isLoggedIn);
         navigationMenu.findItem(R.id.nav_hardware_info).setEnabled(isLoggedIn);
         navigationMenu.findItem(R.id.nav_about).setEnabled(isLoggedIn);
 //        navigationMenu.findItem(R.id.nav_tampers).setEnabled(isLoggedIn);
