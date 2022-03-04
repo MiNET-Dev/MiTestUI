@@ -110,6 +110,21 @@ public class HomeFragment extends Fragment {
     boolean needsToShow = false;
     LinkedHashMap<Integer, ArrayList<String>> mappedDevices;
 
+    Thread checkUpdatesThread;
+
+    @Override
+    public void onStop() {
+        if (checkUpdatesThread.isAlive()) {
+            checkUpdatesThread.interrupt();
+        }
+        super.onStop();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+    }
+
     @SuppressLint("HardwareIds")
     @Nullable
     @Override
@@ -185,104 +200,142 @@ public class HomeFragment extends Fragment {
 
     private void getAllVersions() {
 
-        Objects.requireNonNull(getActivity()).runOnUiThread(() -> {
-            updatesInfoLayout.setVisibility(View.GONE);
-        });
-
-        FTPHandler handler = new FTPHandler();
-
-        String latestService = handler.getAppVersion(AppVersionType.SERVICE);
-        String localService = Utils.getLocalAppVersion("za.co.megaware.MinetService", getContext()) == null ? "not installed" : Utils.getLocalAppVersion("za.co.megaware.MinetService", getContext());
-
-        Objects.requireNonNull(getActivity()).runOnUiThread(() -> {
-            if (!latestService.equals(localService)){
-                TextView text = new TextView(getContext());
-                text.setTextColor(ContextCompat.getColor(getContext(), R.color.btnGreen));
-                text.setTypeface(text.getTypeface(), Typeface.BOLD);
-                text.setGravity(Gravity.CENTER);
-                text.setTextSize(12);
-                text.setText("Service Updates Available -> " + latestService);
-                updatesInfoLayout.addView(text);
-                needsToShow = true;
-            }
-        });
-
         try {
-            Thread.sleep(2000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        String latestFirmware = handler.getAppVersion(AppVersionType.FIRMWARE);
-        String localFirmware = getFirmwareVersion();
-
-        Objects.requireNonNull(getActivity()).runOnUiThread(() -> {
-            if (!latestFirmware.equals(localFirmware)){
-                TextView text = new TextView(getContext());
-                text.setTextColor(ContextCompat.getColor(getContext(), R.color.btnGreen));
-                text.setTypeface(text.getTypeface(), Typeface.BOLD);
-                text.setGravity(Gravity.CENTER);
-                text.setTextSize(12);
-                text.setText("Firmware Updates Available -> " + latestFirmware);
-                updatesInfoLayout.addView(text);
-                needsToShow = true;
-            }
-        });
-
-        String latestOldUI = handler.getAppVersion(AppVersionType.OLD_UI);
-        String localOldUI = Utils.getLocalAppVersion("com.silver.userinterfacealpha", getContext())== null ? "not installed" : Utils.getLocalAppVersion("com.silver.userinterfacealpha", getContext());
-
-        Objects.requireNonNull(getActivity()).runOnUiThread(() -> {
-            if (!latestOldUI.equals(localOldUI)){
-                TextView text = new TextView(getContext());
-                text.setTextColor(ContextCompat.getColor(getContext(), R.color.btnGreen));
-                text.setTypeface(text.getTypeface(), Typeface.BOLD);
-                text.setGravity(Gravity.CENTER);
-                text.setTextSize(12);
-                text.setText("Old UI Updates Available -> " + latestOldUI);
-                updatesInfoLayout.addView(text);
-                needsToShow = true;
-            }
-        });
-
-        String latestNewUI = handler.getAppVersion(AppVersionType.NEW_UI);
-        String localNewUI = Utils.getLocalAppVersion("com.minet.mitestui", getContext()) == null ? "not installed" : Utils.getLocalAppVersion("com.minet.mitestui", getContext());
-
-        Objects.requireNonNull(getActivity()).runOnUiThread(() -> {
-            if (!latestNewUI.equals(localNewUI)){
-                TextView text = new TextView(getContext());
-                text.setTextColor(ContextCompat.getColor(getContext(), R.color.btnGreen));
-                text.setTypeface(text.getTypeface(), Typeface.BOLD);
-                text.setGravity(Gravity.CENTER);
-                text.setTextSize(12);
-                text.setText("New UI Updates Available -> " + latestNewUI);
-                updatesInfoLayout.addView(text);
-                needsToShow = true;
-            }
-        });
-
-        String latestBpass = handler.getAppVersion(AppVersionType.OPEN_TRANSIT);
-        String localBpass = Utils.getLocalAppVersion("com.bps.bpass.mainpackage", getContext()) == null ? "not installed" : Utils.getLocalAppVersion("com.bps.bpass.mainpackage", getContext());
-
-        Objects.requireNonNull(getActivity()).runOnUiThread(() -> {
-            if (!latestBpass.equals(localBpass)){
-                TextView text = new TextView(getContext());
-                text.setTextColor(ContextCompat.getColor(getContext(), R.color.btnGreen));
-                text.setTypeface(text.getTypeface(), Typeface.BOLD);
-                text.setGravity(Gravity.CENTER);
-                text.setTextSize(12);
-                text.setText("Open Transit Updates Available -> " + latestBpass);
-                updatesInfoLayout.addView(text);
-                needsToShow = true;
-            }
-        });
-
-        if (needsToShow) {
             Objects.requireNonNull(getActivity()).runOnUiThread(() -> {
-                updatesInfoLayout.setVisibility(View.VISIBLE);
-                fabUpdate.setVisibility(View.VISIBLE);
+                try {
+                    updatesInfoLayout.setVisibility(View.GONE);
+                } catch (Exception ex){
+                    // DO NOTHING
+                }
             });
-        } else fabUpdate.setVisibility(View.GONE);
+
+            FTPHandler handler = new FTPHandler();
+
+            String latestService = handler.getAppVersion(AppVersionType.SERVICE);
+            String localService = Utils.getLocalAppVersion("za.co.megaware.MinetService", getContext()) == null ? "not installed" : Utils.getLocalAppVersion("za.co.megaware.MinetService", getContext());
+
+            Objects.requireNonNull(getActivity()).runOnUiThread(() -> {
+                try {
+                    if (!latestService.equals(localService)){
+                        TextView text = new TextView(getContext());
+                        text.setTextColor(ContextCompat.getColor(getContext(), R.color.btnGreen));
+                        text.setTypeface(text.getTypeface(), Typeface.BOLD);
+                        text.setGravity(Gravity.CENTER);
+                        text.setTextSize(12);
+                        text.setText("Service Updates Available -> " + latestService);
+                        updatesInfoLayout.addView(text);
+                        needsToShow = true;
+                    }
+                } catch (Exception ex){
+                    // DO NOTHING
+                }
+            });
+
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            String latestFirmware = handler.getAppVersion(AppVersionType.FIRMWARE);
+            String localFirmware = getFirmwareVersion();
+
+            Objects.requireNonNull(getActivity()).runOnUiThread(() -> {
+                try {
+                    if (!latestFirmware.equals(localFirmware)){
+                        TextView text = new TextView(getContext());
+                        text.setTextColor(ContextCompat.getColor(getContext(), R.color.btnGreen));
+                        text.setTypeface(text.getTypeface(), Typeface.BOLD);
+                        text.setGravity(Gravity.CENTER);
+                        text.setTextSize(12);
+                        text.setText("Firmware Updates Available -> " + latestFirmware);
+                        updatesInfoLayout.addView(text);
+                        needsToShow = true;
+                    }
+                } catch (Exception ex){
+                    // DO NOTHING
+                }
+            });
+
+            String latestOldUI = handler.getAppVersion(AppVersionType.OLD_UI);
+            String localOldUI = Utils.getLocalAppVersion("com.silver.userinterfacealpha", getContext())== null ? "not installed" : Utils.getLocalAppVersion("com.silver.userinterfacealpha", getContext());
+
+            Objects.requireNonNull(getActivity()).runOnUiThread(() -> {
+                try {
+                    if (!latestOldUI.equals(localOldUI)){
+                        TextView text = new TextView(getContext());
+                        text.setTextColor(ContextCompat.getColor(getContext(), R.color.btnGreen));
+                        text.setTypeface(text.getTypeface(), Typeface.BOLD);
+                        text.setGravity(Gravity.CENTER);
+                        text.setTextSize(12);
+                        text.setText("Old UI Updates Available -> " + latestOldUI);
+                        updatesInfoLayout.addView(text);
+                        needsToShow = true;
+                    }
+                } catch (Exception ex){
+                    // DO NOTHING
+                }
+            });
+
+            String latestNewUI = handler.getAppVersion(AppVersionType.NEW_UI);
+            String localNewUI = Utils.getLocalAppVersion("com.minet.mitestui", getContext()) == null ? "not installed" : Utils.getLocalAppVersion("com.minet.mitestui", getContext());
+
+            Objects.requireNonNull(getActivity()).runOnUiThread(() -> {
+                try {
+                    if (!latestNewUI.equals(localNewUI)){
+                        TextView text = new TextView(getContext());
+                        text.setTextColor(ContextCompat.getColor(getContext(), R.color.btnGreen));
+                        text.setTypeface(text.getTypeface(), Typeface.BOLD);
+                        text.setGravity(Gravity.CENTER);
+                        text.setTextSize(12);
+                        text.setText("New UI Updates Available -> " + latestNewUI);
+                        updatesInfoLayout.addView(text);
+                        needsToShow = true;
+                    }
+                } catch (Exception ex){
+                    // DO NOTHING
+                }
+            });
+
+            String latestBpass = handler.getAppVersion(AppVersionType.OPEN_TRANSIT);
+            String localBpass = Utils.getLocalAppVersion("com.bps.bpass.mainpackage", getContext()) == null ? "not installed" : Utils.getLocalAppVersion("com.bps.bpass.mainpackage", getContext());
+
+            Objects.requireNonNull(getActivity()).runOnUiThread(() -> {
+                try {
+                    if (!latestBpass.equals(localBpass)){
+                        TextView text = new TextView(getContext());
+                        text.setTextColor(ContextCompat.getColor(getContext(), R.color.btnGreen));
+                        text.setTypeface(text.getTypeface(), Typeface.BOLD);
+                        text.setGravity(Gravity.CENTER);
+                        text.setTextSize(12);
+                        text.setText("Open Transit Updates Available -> " + latestBpass);
+                        updatesInfoLayout.addView(text);
+                        needsToShow = true;
+                    }
+                } catch (Exception ex){
+                    // DO NOTHING
+                }
+            });
+
+            if (needsToShow) {
+                Objects.requireNonNull(getActivity()).runOnUiThread(() -> {
+                    try {
+                        updatesInfoLayout.setVisibility(View.VISIBLE);
+                        fabUpdate.setVisibility(View.VISIBLE);
+                    } catch (Exception ex){
+                        // DO NOTHING
+                    }
+                });
+            } else {
+                try {
+                    fabUpdate.setVisibility(View.GONE);
+                } catch (Exception ex){
+                    // DO NOTHING
+                }
+            }
+        } catch (Exception ex){
+            // DO NOTHING
+        }
     }
 
     public String getFirmwareVersion(){
@@ -397,19 +450,26 @@ public class HomeFragment extends Fragment {
         }
     }
 
-    public void syncWithService(){
+    public void syncWithService() {
         try {
             ProcessPrinterEvents(ServiceHelper.getInstance().getPrinterStates());
             ProcessTamperInfo(ServiceHelper.getInstance().getTamperStates());
             txtIMEI.setText(ServiceHelper.getInstance().getIMEI());
             txtMACAddress.setText(ServiceHelper.getInstance().getMacAddress());
             txtIPAddress.setText(ServiceHelper.getInstance().getIPAddress());
-            new Thread() {
+            checkUpdatesThread = new Thread() {
                 @Override
                 public void run() {
                     getAllVersions();
                 }
-            }.start();
+
+                @Override
+                public boolean isInterrupted() {
+                    return super.isInterrupted();
+                }
+            };
+
+            checkUpdatesThread.start();
         } catch (RemoteException e) {
             e.printStackTrace();
         }

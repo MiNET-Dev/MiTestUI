@@ -32,6 +32,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Objects;
 
@@ -179,7 +180,6 @@ public class QCChecklistFragment extends Fragment implements FTPAsyncResponse {
             if(actualView instanceof CheckBox) {
                 returnViews.add((CheckBox) actualView);
             }
-
         }
 
         for(View mView: returnViews){
@@ -220,7 +220,7 @@ public class QCChecklistFragment extends Fragment implements FTPAsyncResponse {
 
         if (savedCheckBoxMap.size() > 0){
             for (Integer key : savedCheckBoxMap.keySet()) {
-                checkBoxMap.put(key, new QCCheckListInfo(savedCheckBoxMap.get(key).getIsChecked(), savedCheckBoxMap.get(key).getQCName()));
+                checkBoxMap.put(key, new QCCheckListInfo(savedCheckBoxMap.get(key).getIsChecked(), savedCheckBoxMap.get(key).getQCName(), savedCheckBoxMap.get(key).getTimestamp()));
             }
         }
     }
@@ -238,9 +238,8 @@ public class QCChecklistFragment extends Fragment implements FTPAsyncResponse {
                 _tempSet.add("IMEI:" + telephonyManager.getDeviceId());
 
                 for (Integer key : checkBoxMap.keySet()) {
-                    String valueToAdd = key + "," + checkBoxMap.get(key).getIsChecked() + "," + checkBoxMap.get(key).getQCName();
+                    String valueToAdd = key + "," + checkBoxMap.get(key).getIsChecked() + "," + checkBoxMap.get(key).getQCName() + "," + checkBoxMap.get(key).getTimestamp();
                     _tempSet.add(valueToAdd);
-
                 }
 
                 if (Utils.GetDeviceNumber() == -1){
@@ -280,9 +279,9 @@ public class QCChecklistFragment extends Fragment implements FTPAsyncResponse {
                     String[] _temp = line.split(",");
 
                     if (_temp[1].equals("true"))
-                        savedCheckBoxMap.put(Integer.valueOf(_temp[0]), new QCCheckListInfo(true, _temp[2]));
+                        savedCheckBoxMap.put(Integer.valueOf(_temp[0]), new QCCheckListInfo(true, _temp[2], _temp.length > 3 ? Long.parseLong(_temp[3]) : 0));
                     else
-                        savedCheckBoxMap.put(Integer.valueOf(_temp[0]), new QCCheckListInfo(false, _temp[2]));
+                        savedCheckBoxMap.put(Integer.valueOf(_temp[0]), new QCCheckListInfo(false, _temp[2], _temp.length > 3 ? Long.parseLong(_temp[3]) : 0));
                 }
 
                 line = reader.readLine();
@@ -306,6 +305,7 @@ public class QCChecklistFragment extends Fragment implements FTPAsyncResponse {
             if (_temp != null) {
                 _temp.setIsChecked(isChecked);
                 _temp.setQCName(MainActivity.loggedInUser.getName());
+                _temp.setTimestamp(new Date().getTime());
             }
 
             checkBoxMap.replace(compoundButton.getId(), _temp);
