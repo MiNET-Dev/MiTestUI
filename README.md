@@ -34,3 +34,6 @@
 6. Select release build on the next page.
 7. Click **Finish**
 8. Locate the build .apk file in the release build folder of project structure in a file explorer. File Destination **MiTestUI** -> **src** -> **app** -> **release**
+9. Once .apk is found, it needs to placed on the FTP Server in the following Directory. www.minet.co.za/midevice/bus/RefreshedLatestUI
+10. Delete old refreshedui.apk and replace it with new refreshedui.apk (make sure that the uploaded file is named exactly `refreshedui.apk`)
+11. Change the version number in the version.txt to match that of the new refreshedui.apk
