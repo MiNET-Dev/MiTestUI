@@ -22,6 +22,7 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -53,6 +54,8 @@ public class HomeFragment extends Fragment {
 
     private View homeFragment;
     private LinearLayout updatesInfoLayout;
+    private RelativeLayout noConnHomeLayout;
+    private ScrollView homeScrollView;
 
     ColorStateList colorStateList = new ColorStateList(
             new int[][]{
@@ -132,6 +135,11 @@ public class HomeFragment extends Fragment {
         homeFragment = inflater.inflate(R.layout.fragment_home, container, false);
 
         updatesInfoLayout = homeFragment.findViewById(R.id.home_update_notification_layout);
+        noConnHomeLayout = homeFragment.findViewById(R.id.no_conn_home_layout);
+
+        homeScrollView = homeFragment.findViewById(R.id.home_scroll_view);
+
+        noConnHomeLayout.setVisibility(View.GONE);
 
         rbPrinterPaper = homeFragment.findViewById(R.id.home_ic_printer_paper);
         rbPrinterPaper.setClickable(false);
@@ -457,19 +465,32 @@ public class HomeFragment extends Fragment {
             txtIMEI.setText(ServiceHelper.getInstance().getIMEI());
             txtMACAddress.setText(ServiceHelper.getInstance().getMacAddress());
             txtIPAddress.setText(ServiceHelper.getInstance().getIPAddress());
-            checkUpdatesThread = new Thread() {
-                @Override
-                public void run() {
-                    getAllVersions();
-                }
 
-                @Override
-                public boolean isInterrupted() {
-                    return super.isInterrupted();
-                }
-            };
+            if (Utils.hasActiveInternetConnection() == ConnectivityState.CONNECTED){
+                checkUpdatesThread = new Thread() {
+                    @Override
+                    public void run() {
+                        getAllVersions();
+                    }
 
-            checkUpdatesThread.start();
+                    @Override
+                    public boolean isInterrupted() {
+                        return super.isInterrupted();
+                    }
+                };
+
+                checkUpdatesThread.start();
+                noConnHomeLayout.setVisibility(View.GONE);
+                RelativeLayout.LayoutParams params= new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.WRAP_CONTENT);
+                params.addRule(RelativeLayout.BELOW, R.id.home_update_notification_layout);
+                homeScrollView.setLayoutParams(params);
+            } else {
+                RelativeLayout.LayoutParams params= new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.WRAP_CONTENT);
+                params.addRule(RelativeLayout.BELOW, R.id.no_conn_home_layout);
+                homeScrollView.setLayoutParams(params);
+                noConnHomeLayout.setVisibility(View.VISIBLE);
+            }
+
         } catch (RemoteException e) {
             e.printStackTrace();
         }
