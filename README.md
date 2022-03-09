@@ -18,7 +18,7 @@
 - Pull files from device - `adb push [DEVICE_FILE_DESTINATION] [LOCAL_PC_FILE_DESTINATION]`
 - Install apk on device - `adb install -r [LOCAL_PC_APK_DESTINATION]`
 
-## Building and running MiNET service on midevice:
+## Building and running MiNET UI on midevice:
 
 1. Connect to device using adb `connect` command, and make sure android studio shows device.
 2. Once connected and device shows in Android Studio, you can now click the play button to push service to device.
