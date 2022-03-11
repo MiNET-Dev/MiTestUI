@@ -72,6 +72,8 @@ public class GPSFragment extends Fragment {
                 txtLatitude.setText(String.format("%.04f", lat));
                 txtLongitude.setText(String.format("%.04f", lon));
                 txtSpeed.setText(String.format("%.03f", speed) + " km/h");
+                noGPSLock.setVisibility(View.INVISIBLE);
+                layoutGPSData.setVisibility(View.VISIBLE);
             } catch (Exception ex){
                 Log.e(TAG, "ProcessGPSInfo: " + ex.getLocalizedMessage());
             }
