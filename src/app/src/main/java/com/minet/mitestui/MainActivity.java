@@ -309,6 +309,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     "za.co.megaware.MinetService android.permission.ACCESS_COARSE_LOCATION",
                     "za.co.megaware.MinetService android.permission.READ_EXTERNAL_STORAGE",
                     "za.co.megaware.MinetService android.permission.WRITE_EXTERNAL_STORAGE",
+                    "za.co.megaware.MinetService android.permission.SHUTDOWN"
             };
 
             for (int i = 0; i < command.length; i++) {
