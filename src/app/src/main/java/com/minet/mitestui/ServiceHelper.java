@@ -13,6 +13,7 @@ import android.widget.Toast;
 
 import androidx.fragment.app.DialogFragment;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
@@ -296,8 +297,17 @@ public class ServiceHelper implements ServiceConnection {
         }
     }
 
-    public void updateFirmware() throws RemoteException {
-        service.UpgradeFirmware("/storage/emulated/0/Download/firmware.bin");
+    public void updateFirmware() throws RemoteException
+    {
+        File File = new File("/storage/emulated/0/Download/firmware_beta.bin");
+        if (File.exists())
+        {
+            service.UpgradeFirmware("/storage/emulated/0/Download/firmware_beta.bin");
+        }
+        else
+        {
+            service.UpgradeFirmware("/storage/emulated/0/Download/firmware.bin");
+        }
     }
 
     public String getIMEI() throws RemoteException {

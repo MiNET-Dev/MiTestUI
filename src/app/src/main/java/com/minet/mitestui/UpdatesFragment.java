@@ -26,6 +26,7 @@ import androidx.annotation.RequiresApi;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Objects;
@@ -116,7 +117,14 @@ public class UpdatesFragment extends Fragment implements FTPAsyncResponse {
         disableButtons(true);
     };
 
-    View.OnClickListener onFirmwareUpdate = v -> {
+    View.OnClickListener onFirmwareUpdate = v ->
+    {
+        File BetaFile = new File("/storage/emulated/0/Download/firmware_beta.bin");
+        if (BetaFile.exists())
+        {
+            Toast.makeText(getContext(), "BETA FIRMWARE DETECTED", Toast.LENGTH_LONG).show();
+        }
+
         updateService = new UpdateService(getContext());
         updateService.setUpdateType(AppVersionType.FIRMWARE);
         updateService.start();

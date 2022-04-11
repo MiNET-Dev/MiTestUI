@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.DialogFragment;
@@ -56,10 +57,14 @@ public class UpdateService extends Thread {
 
         File File = new File(_DESTINATION_PATH);
 
-        if (!File.exists()){
-            try {
+        if (!File.exists())
+        {
+            try
+            {
                 File.createNewFile();
-            } catch (IOException e) {
+            }
+            catch (IOException e)
+            {
                 e.printStackTrace();
             }
         }
@@ -68,7 +73,9 @@ public class UpdateService extends Thread {
         downloadFile(_DOWNLOAD_URL, File);
 
         if (appVersionType != AppVersionType.FIRMWARE)
+        {
             silentInstall(File);
+        }
 
         _isRunning = false;
     }
